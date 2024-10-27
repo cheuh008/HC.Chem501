@@ -7,14 +7,10 @@ mpl.rcParams['axes.formatter.useoffset'] = False    # Remove annoying auto-offse
 import matplotlib.pyplot as plt
 
 plt.ion()  # Enable interactive plotting
-
-# Connect to the Nicla
 ports = serial.tools.list_ports.comports()
 for n in ports:
-    dev = n.device
-# See baudrate=115200 below? This is the speed at which the Nicla communicates with the computer. Don't change it.
+    dev = n.device if n.device else "No Board?"
 nicla = serial.Serial(port=dev, baudrate=115200, timeout=.1)
-
 n_readings = 200
 column_titles = ['time', 'temp', 'pressure', 'gas']
 
@@ -23,14 +19,12 @@ while True:
     nicla.write(bytes("{f0}".format(f0=n_readings), 'utf-8'))
     # Create somewhere to store the data
     data_table = np.zeros((n_readings, len(column_titles)))
-
+    
     for n in range(n_readings):
         data = nicla.readline()
-        # Split the line read from the Nicla every time it finds a ','
         data = np.fromstring(data, sep=',')
         if len(data) == len(column_titles):
             data_table[n,:] = data
-
     tpg_data = pd.DataFrame(data_table, columns=column_titles)
 
     data_filtered = tpg_data[['time', 'temp']]
