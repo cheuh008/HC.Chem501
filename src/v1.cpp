@@ -38,6 +38,5 @@ void setup() {
     Serial.println("\nConnected to: " + String(broker)); // Print successful connection
 }
 
-void loop()
-{
+void loop() {
 }
