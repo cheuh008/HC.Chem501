@@ -11,6 +11,7 @@
 #include <WiFiNINA.h>                                   // Include WiFi library
 #include <utility/wifi_drv.h>                           // include wifi LED library
 #include <ArduinoHttpClient.h>                          // Http library for handling webhook
+#include <ESP_Google_Sheet_Client.h>
 
  //Sensors init from nicla sense over Eslov      
 Sensor temp(SENSOR_ID_TEMP);
@@ -30,13 +31,10 @@ const char ssid[] = SECRET_SSID;                        // Replace with your WiF
 const char pass[] = SECRET_PASS;                        // Replace with your WiFi password
 const char url[] = SUPABASE_URL;
 const char key[] = SUPABASE_KEY;
-const char csv[] = SHEETS_URL;
+const char private_key[] = PRIVATE_KEY;
 
-
-WiFiClient wifiClient;                                  // Create WiFi client to connect to wifi and SQL
-HttpClient supabaseClient = HttpClient(wifiClient, SUPABASE_URL, 80);
-HttpClient sheetsClient = HttpClient(wifiClient, SHEETS_URL, 443);
-
+WiFiClient wifi;                                  // Create WiFi client to connect to wifi and SQL
+HttpClient supabaseClient = HttpClient(wifi, SUPABASE_URL, 80);
 
 void setup() {
     Serial.begin(115200);                               // Initialize serial communication at defined baud rate
@@ -60,7 +58,7 @@ void loop() {
     const char* labels[] = {
         "temperature",
         "humidity",
-        "oressure",
+        "Pressure",
         "gyroscope",
         "accelerometer",
         "quaternion",
@@ -70,9 +68,9 @@ void loop() {
     };
     String data = "{";
     for (int i = 0; i < 9; i++) {
-        if (Serial) Serial.println(String(labels[i]) + ": " + sensorValues[i]);
+        if (Serial) { Serial.println(String(labels[i]) + ": " + sensorValues[i]); };
         data += "\"" + String(labels[i]) + "\": " + sensorValues[i];
-        if (i < 8) data += ",";
+        if (i < 8) { data += ","; };
     }
     data += "}";
 
@@ -100,21 +98,23 @@ void sendDataToSupabase(String json) {
 }
 
 void sendDataToGoogleSheets(String json) {
+    String endpoint = "/v4/spreadsheets/" + String(SHEET_ID) + "/values/Sheet1!A1:append?valueInputOption=USER_ENTERED";
+
     sheetsClient.beginRequest();
-    sheetsClient.post("/v4/spreadsheets/YOUR_SHEET_ID/values:batchUpdate");
+    sheetsClient.post(endpoint);
     sheetsClient.sendHeader("Content-Type", "application/json");
     sheetsClient.sendHeader("Authorization", "Bearer YOUR_ACCESS_TOKEN");
     sheetsClient.sendHeader("Content-Length", json.length());
     sheetsClient.beginBody();
     sheetsClient.print(json);
     sheetsClient.endRequest();
+
+    int statusCode = sheetsClient.responseStatusCode();
     if (Serial) {
-        int statusCode = sheetsClient.responseStatusCode();
         Serial.println("Google Sheets Status code: " + String(statusCode));
         Serial.println("Sent to Google Sheets: " + json);
     }
 }
-
 
 void connectWiFi() {                                    // Wifi Connetion Loop (LED Orange Flash)
     while (WiFi.begin(ssid, pass) != WL_CONNECTED) {    // Loop start until connected 
