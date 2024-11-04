@@ -30,10 +30,13 @@ const char ssid[] = SECRET_SSID;                        // Replace with your WiF
 const char pass[] = SECRET_PASS;                        // Replace with your WiFi password
 const char url[] = SUPABASE_URL;
 const char key[] = SUPABASE_KEY;
+const char csv[] = SHEETS_URL;
+
 
 WiFiClient wifiClient;                                  // Create WiFi client to connect to wifi and SQL
 HttpClient supabaseClient = HttpClient(wifiClient, SUPABASE_URL, 80);
 HttpClient sheetsClient = HttpClient(wifiClient, SHEETS_URL, 443);
+
 
 void setup() {
     Serial.begin(115200);                               // Initialize serial communication at defined baud rate
