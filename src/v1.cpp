@@ -12,11 +12,14 @@
 #include <utility/wifi_drv.h>                           // include wifi LED library
 #include <ArduinoHttpClient.h>                          // Http library for handling webhook
 
- //Sensors init from nicla sense over Eslov              // Poor practice iminent just for the ADHD just cuz reading multiline is too overstim
-Sensor temp(SENSOR_ID_TEMP), gas(SENSOR_ID_GAS);        // Poor Practice to init tempreture and gas sensors in one 
-Sensor humid(SENSOR_ID_HUM), pres(SENSOR_ID_BARO);      // and again for the humidity and pressure sensors 
-SensorXYZ gyro(SENSOR_ID_GYRO), accel(SENSOR_ID_ACC);   // 3 axis gyroscope and accelerometer
-SensorQuaternion quat(SENSOR_ID_RV);                    // Correct practice. one line, 1 sensor intit
+ //Sensors init from nicla sense over Eslov      
+Sensor temp(SENSOR_ID_TEMP);
+Sensor gas(SENSOR_ID_GAS);
+Sensor humid(SENSOR_ID_HUM);
+Sensor pres(SENSOR_ID_BARO);
+SensorXYZ gyro(SENSOR_ID_GYRO);
+SensorXYZ accel(SENSOR_ID_ACC);
+SensorQuaternion quat(SENSOR_ID_RV);
 SensorBSEC bsec(SENSOR_ID_BSEC);                        // init Bosch Sensortec Environmental Cluster BME688 to  access the air quality (IAQ)
 SensorActivity acti(SENSOR_ID_AR);
 
