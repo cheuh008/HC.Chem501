@@ -32,9 +32,11 @@ const char pass[] = SECRET_PASS;                        // Replace with your WiF
 const char url[] = SUPABASE_URL;
 const char key[] = SUPABASE_KEY;
 const char private_key[] = PRIVATE_KEY;
+const String sheet_id = SHEET_ID;
 
 WiFiClient wifi;                                  // Create WiFi client to connect to wifi and SQL
 HttpClient supabaseClient = HttpClient(wifi, SUPABASE_URL, 80);
+HttpClient sheetsClient = HttpClient(wifi, "sheets.googleapis.com", 443);
 
 void setup() {
     Serial.begin(115200);                               // Initialize serial communication at defined baud rate
@@ -68,7 +70,7 @@ void loop() {
     };
     String data = "{";
     for (int i = 0; i < 9; i++) {
-        if (Serial) { Serial.println(String(labels[i]) + ": " + sensorValues[i]); };
+        if (Serial) { Serial.println(String(labels[i]) + ": " + String(sensorValues[i])); };
         data += "\"" + String(labels[i]) + "\": " + sensorValues[i];
         if (i < 8) { data += ","; };
     }
@@ -106,7 +108,7 @@ void sendDataToGoogleSheets(String json) {
     sheetsClient.sendHeader("Authorization", "Bearer YOUR_ACCESS_TOKEN");
     sheetsClient.sendHeader("Content-Length", json.length());
     sheetsClient.beginBody();
-    sheetsClient.print(json);
+    sheetsClient.print("{\"values\":[[" + json + "]]}"); // Correct JSON format
     sheetsClient.endRequest();
 
     int statusCode = sheetsClient.responseStatusCode();
