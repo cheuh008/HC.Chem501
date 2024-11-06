@@ -16,11 +16,13 @@
 
 // Including all the required Libraries and Files ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include <WiFiNINA.h>          // Include Library for connecting to wifi
-#include <RTCZero.h>           // Include a library to keep track of the time
+#include <NTPClient.h>         //
+#include <WiFiUdp.h>           //
 #include <algorithm>           // Include algorithm for std::any_of
 #include "secrets.h"           // Inlcude the file that contain SSID, Password, API Channel ID and Keys
 #include "Arduino_BHY2Host.h"  // BHY2Host library for sensor data from Nicla
 #include "ThingSpeak.h"        // always include thingspeak header file after other header files and custom macros
+
 
 // Defining some key variables needed / grabbing them from secrets.h ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 char ssid[] = SECRET_SSID;               // deifine network SSID (name) from secrets.h or define your own
@@ -28,19 +30,22 @@ char pass[] = SECRET_PASS;               // your network password
 unsigned long ChannelID = SECRET_CH_ID;  // ThingSpeak Channel ID
 const char* APIKey = SECRET_W_APIKEY;    // ThingSpeak API Key
 
-RTCZero rtc;
 WiFiClient client;                // Initialise a client for connecting to WIFI
 SensorBSEC bsec(SENSOR_ID_BSEC);  // Define varibale name for Bosch Sensortec Environmental Cluster BME688 to access the air quality (IAQ)
 
+WiFiUDP ntpUDP;                                          //
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 0, 60000);  //
+
+char message[20];  //
+
 // Inital Setup Function ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void setup() {
-  Serial.begin(9600);  // Initialize serial communication at defined baud rate
-  rtc.begin();
-  rtc.setDateTime(__DATE__, __TIME__);        // Set the date and time (optional)
+  Serial.begin(9600);                         // Initialize serial communication at defined baud rate
   BHY2Host.begin(false, NICLA_VIA_ESLOV);     // Begin collecting Nicla BHY2 Data over Eslov
   delay(2500);                                // Give delay for for Serial a chance to connect
   bsec.begin();                               // Initalise the BSEC Sensor and the data it provides
   Serial.println("BSEC sensor initialised");  // Serial Debug Output
+  wifiConnect();
 }
 
 // Main Function Loop ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,36 +64,54 @@ void loop() {
     bsec.comp_g()     // compensated gas resistance (Ohms)
   };
 
-  if (WiFi.status() != WL_CONNECTED) {       // In the event that the wifi is not set / lost
-    Serial.println("Connecting to wifi ");   // Debug message signalling wifi reconnect
-    while (WiFi.status() != WL_CONNECTED) {  // Wait for wifi to connect
-      WiFi.begin(ssid, pass);                // initalise wifi using given ssid and password
-      Serial.println(".");                   // output to serial to shown reconnect attempt
-      delay(2500);                           // delay until reconnect
-    }
-    Serial.println("Connected to WiFi");  // Serial output if connection succesful
-    ThingSpeak.begin(client);             // Initialize connection to ThingSpeak
+  if (WiFi.status() != WL_CONNECTED) {  // In the event that the wifi is not set / lost
+    wifiConnect();
   }
-  if (millis() - lastCheck >= 30000) {    // wait until 30s passed:
-    lastCheck = millis();                 // reset clock counter
-    for (float value : sensorReadings) {  // simple loop through all value
-      std::cout << value << " ";          //
-    }                                     //
-    std::cout << std::endl;
-    if (std::any_of(std::begin(sensorReadings), std::end(sensorReadings), [](float value) {
-          return value != 0.0f;  // Check if the value is non-zero
-        })) {
-      int items = sizeof(sensorReadings) / sizeof(sensorReadings[0]);  //
-      for (int i = 0; i < items; i++) {                                //
-        ThingSpeak.setField(i + 1, sensorReadings[i]);                 //
-      }                                                                //
-      ThingSpeak.setStatus("BSEC Values updated at: " + rtc.now());    //
-      int x = ThingSpeak.writeFields(ChannelID, APIKey);               // write to the specified ThingSpeak channel
-      if (x == 200) {                                                  //
-        Serial.println("Channel update successful.");                  //
-      } else {                                                         //
-        Serial.println(" HTTP error code " + String(x));               //
-      }
+  bool allZeros = true;
+
+
+  if (millis() - lastCheck >= 30000) {  // wait until 30s passed:
+    lastCheck = millis();               // reset clock counter
+    Serial.println("Readings ");
+    for (float value : sensorReadings) {  // simple loop through all values
+      Serial.print(value);                // Print the value followed by a space
+      Serial.print(", ");                 // Add a space between values
+      if (value != 0) allZeros = false;   // check for at least 1 non zero value
     }
+    Serial.println();
+    if (allZeros == false) {  // if there is at least one non zero value, we write to ThingSpeak
+      uploadData(sensorReadings);
+    }
+  }
+}
+
+void wifiConnect() {
+  Serial.println("Connecting to wifi ");   // Debug message signalling wifi reconnect
+  while (WiFi.status() != WL_CONNECTED) {  // Wait for wifi to connect
+    WiFi.begin(ssid, pass);                // initalise wifi using given ssid and password
+    Serial.println(".");                   // output to serial to shown reconnect attempt
+    delay(2500);                           // delay until reconnect
+  }
+  Serial.println("Connected to WiFi");  // Serial output if connection succesful
+  ThingSpeak.begin(client);             // Initialize connection to ThingSpeak
+  timeClient.begin();
+}
+void uploadData(float sensorReadings[]) {
+  int items = sizeof(sensorReadings) / sizeof(sensorReadings[0]);  //
+  for (int i = 0; i < items; i++) {
+    ThingSpeak.setField(i + 1, sensorReadings[i]);  //
+  }
+  timeClient.update();
+  int day = timeClient.getDay();
+  int hour = timeClient.getHours();
+  int minute = timeClient.getMinutes();
+  sprintf(message, "BSEC Values updated at: %02d/%02d %02d:%02d", day, hour, minute);
+  Serial.println(message);
+  ThingSpeak.setStatus(message);                      //
+  int x = ThingSpeak.writeFields(ChannelID, APIKey);  // write to the specified ThingSpeak channel
+  if (x == 200) {                                     //
+    Serial.println("Channel update successful.");     //
+  } else {                                            //
+    Serial.println(" HTTP error code " + String(x));  //
   }
 }
