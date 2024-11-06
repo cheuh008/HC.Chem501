@@ -5,11 +5,8 @@
 #define SECRET_SSID "ssid"     // Replace with your WiFi SSID
 #define SECRET_PASS "wifi_pw" // Replace with your WiFi password
 
-// MQTT broker details
-#define SECRET_BROKER "test.mosquitto.org" // Replace with your MQTT broker address if different
-#define SECRET_PORT 1883                   // Port number for MQTT
-
-// Optional: Other secrets can go here
-#define SECRET_BAUDRATE 115200 // Example Baudrate
+// ThingSpeak credentials
+#define SECRET_CH_ID 0000000        // replace 0000000 with your channel number
+#define SECRET_W_APIKEY "XYZ"  // replace XYZ with your channel write API Key
 
 #endif
