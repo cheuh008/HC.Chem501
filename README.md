@@ -1,6 +1,6 @@
 # BSEC Sensor Data Logging to ThingSpeak
 
-Univeristy of Liverpool MSC Digital Chemistry Project
+University of Liverpool MSC Digital Chemistry Project
 
 - Harry
 
@@ -20,10 +20,8 @@ This project involves collecting environmental sensor data from the Bosch Sensor
 - Libraries:
   - `WiFiNINA`
   - `RTCZero`
-  - `NTPClient`
   - `ThingSpeak`
   - `Arduino_BHY2Host`
-  - `WiFiUdp`
 
 ## Setup Instructions
 
@@ -38,7 +36,6 @@ This project involves collecting environmental sensor data from the Bosch Sensor
    - Search for and install the following libraries:
      - `WiFiNINA`
      - `RTCZero`
-     - `NTPClient`
      - `ThingSpeak`
      - `Arduino_BHY2Host`
 
