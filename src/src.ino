@@ -1,16 +1,16 @@
 /*
   WriteMultipleFields
   Description: Writes values to fields 1,2,3,4 and status in a single ThingSpeak update every 1 seconds.
-  Hardware: Arduino MKR WiFi 1010  
+  Hardware: Arduino MKR WiFi 1010
 
-  ThingSpeak ( https://www.thingspeak.com ) is an analytic IoT platform service that allows you to aggregate, visualize, and 
-  analyze live data streams in the cloud. Visit https://www.thingspeak.com to sign up for a free account and create a channel.  
-  
+  ThingSpeak ( https://www.thingspeak.com ) is an analytic IoT platform service that allows you to aggregate, visualize, and
+  analyze live data streams in the cloud. Visit https://www.thingspeak.com to sign up for a free account and create a channel.
+
   Documentation for the ThingSpeak Communication Library for Arduino is in the README.md folder where the library was installed.
   See https://www.mathworks.com/help/thingspeak/index.html for the full ThingSpeak documentation.
-  
+
   For licensing information, see the accompanying license file.
-  
+
   Copyright 2020, The MathWorks, Inc.
 */
 // Including all the required Libraries and Files --------------------------------------------------------------------------------------
@@ -94,7 +94,8 @@ void loop() {
       if (x == 200) {                                         // If the update is successful
         Serial.println("Channel update successful.");         // Print success message
         Serial.println("6");                                  // Debugging label for sensor readings
-      } else {                                                // If there was an error with the HTTP request
+      }
+      else {                                                // If there was an error with the HTTP request
         Serial.println(" HTTP error code " + String(x));      // Print HTTP error code to help debug
       }
     }
@@ -138,7 +139,8 @@ void getTime() {
     Serial.print("NTP unreachable!!");  // Print error message
     wifiConnect();
 
-  } else {
+  }
+  else {
     Serial.print("Epoch received: ");  // Print the fetched epoch time
     Serial.println(epoch);             // Print the actual epoch value
     rtc.setEpoch(epoch);               // Set the RTC with the fetched epoch time
