@@ -16,42 +16,47 @@
 
 // Including all the required Libraries and Files ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include <WiFiNINA.h>          // Include Library for connecting to wifi
-#include <NTPClient.h>         //
-#include <WiFiUdp.h>           //
-#include <algorithm>           // Include algorithm for std::any_of
+#include <NTPClient.h>         // Library for synchronizing time with an NTP server
+#include <WiFiUdp.h>           // Library for sending and receiving UDP packets over Wi-Fi
 #include "secrets.h"           // Inlcude the file that contain SSID, Password, API Channel ID and Keys
 #include "Arduino_BHY2Host.h"  // BHY2Host library for sensor data from Nicla
 #include "ThingSpeak.h"        // always include thingspeak header file after other header files and custom macros
 
 
 // Defining some key variables needed / grabbing them from secrets.h ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-char ssid[] = SECRET_SSID;               // deifine network SSID (name) from secrets.h or define your own
-char pass[] = SECRET_PASS;               // your network password
-unsigned long ChannelID = SECRET_CH_ID;  // ThingSpeak Channel ID
-const char* APIKey = SECRET_W_APIKEY;    // ThingSpeak API Key
+char ssid[] = SECRET_SSID;               // Define Wi-Fi network SSID (name) from secrets.h or set your own
+char pass[] = SECRET_PASS;               // Define Wi-Fi network password
+unsigned long ChannelID = SECRET_CH_ID;  // ThingSpeak Channel ID for data upload
+                                         //
+const char* APIKey = SECRET_W_APIKEY;    // ThingSpeak API Key for authentication
+char message[20];                        // Declare a character array to store the message to send to ThingSpeak
+WiFiClient client;                       // Initializes a client to establish Wi-Fi connections
+SensorBSEC bsec(SENSOR_ID_BSEC);         // Creates an instance of SensorBSEC for interacting with the Bosch BME688 sensor to access air quality data (IAQ)
+Sensor pressure(SENSOR_ID_BARO);
 
-WiFiClient client;                // Initialise a client for connecting to WIFI
-SensorBSEC bsec(SENSOR_ID_BSEC);  // Define varibale name for Bosch Sensortec Environmental Cluster BME688 to access the air quality (IAQ)
 
-WiFiUDP ntpUDP;                                          //
-NTPClient timeClient(ntpUDP, "pool.ntp.org", 0, 60000);  //
+WiFiUDP ntpUDP;                                          // Creates an instance of WiFiUDP to handle NTP communication
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 0, 60000);  // Initializes the NTPClient with the NTP server, UTC offset (0), and update interval (60000 ms)
 
-char message[20];  //
 
 // Inital Setup Function ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void setup() {
-  Serial.begin(9600);                         // Initialize serial communication at defined baud rate
-  BHY2Host.begin(false, NICLA_VIA_ESLOV);     // Begin collecting Nicla BHY2 Data over Eslov
-  delay(2500);                                // Give delay for for Serial a chance to connect
-  bsec.begin();                               // Initalise the BSEC Sensor and the data it provides
-  Serial.println("BSEC sensor initialised");  // Serial Debug Output
-  wifiConnect();
+  Serial.begin(9600);                         // Initialize serial communication at 9600 baud rate
+  BHY2Host.begin(false, NICLA_VIA_ESLOV);     // Begin collecting data from the Nicla BHY2 sensor over Eslov
+  delay(2500);                                // Delay to allow serial connection to establish
+  bsec.begin();                               // Initialize the BSEC sensor and start acquiring data
+  Serial.println("BSEC sensor initialised");  // Output debug message indicating BSEC sensor is initialized
+  wifiConnect();                              // Call the wifiConnect function to connect to the Wi-Fi network
+  pressure.begin();
 }
 
 // Main Function Loop ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void loop() {
-  BHY2Host.update();                 // Updating the Sensor readings
-  static auto lastCheck = millis();  // starting a clock
+  delay(1000);        // Delay for 2 seconds to allow time for processing and stable sensor readings
+  Serial.print(".");  // Print a dot to indicate progress in the serial monitor
+  BHY2Host.update();  // Update the sensor readings from the BHY2 host
+
+  static auto lastCheck = millis();  // Initialize a static variable to track the last check time
 
   // Here we only grab 7/8 data values in the dictionary and store it as a list of floats
   float sensorReadings[] = {
@@ -64,23 +69,24 @@ void loop() {
     bsec.comp_g()     // compensated gas resistance (Ohms)
   };
 
-  if (WiFi.status() != WL_CONNECTED) {  // In the event that the wifi is not set / lost
-    wifiConnect();
+  if (WiFi.status() != WL_CONNECTED) {  // If Wi-Fi is not connected or lost
+    wifiConnect();                      // Reconnect to Wi-Fi
   }
-  bool allZeros = true;
 
+  bool allZeros = true;                 // Flag to track if all sensor readings are zero
+  if (millis() - lastCheck >= 10000) {  // Wait for 30 seconds to pass
+    lastCheck = millis();               // Reset the timer
+    Serial.println(String("pressure: ") + pressure.toString());
 
-  if (millis() - lastCheck >= 30000) {  // wait until 30s passed:
-    lastCheck = millis();               // reset clock counter
-    Serial.println("Readings ");
-    for (float value : sensorReadings) {  // simple loop through all values
-      Serial.print(value);                // Print the value followed by a space
-      Serial.print(", ");                 // Add a space between values
-      if (value != 0) allZeros = false;   // check for at least 1 non zero value
-    }
-    Serial.println();
-    if (allZeros == false) {  // if there is at least one non zero value, we write to ThingSpeak
-      uploadData(sensorReadings);
+    Serial.println("Readings ");          // Print label for sensor readings
+    for (float value : sensorReadings) {  // Loop through each sensor reading
+      Serial.print(value);                // Print the value
+      Serial.print(", ");                 // Add a comma separator
+      if (value != 0) allZeros = false;   // If any value is non-zero, set flag to false
+    }                                     //
+    Serial.println();                     // Prints a newline after readings
+    if (allZeros == false) {              // If at least one value is non-zero
+      uploadData(sensorReadings);         // Upload the sensor data to ThingSpeak
     }
   }
 }
@@ -96,22 +102,28 @@ void wifiConnect() {
   ThingSpeak.begin(client);             // Initialize connection to ThingSpeak
   timeClient.begin();
 }
+
 void uploadData(float sensorReadings[]) {
-  int items = sizeof(sensorReadings) / sizeof(sensorReadings[0]);  //
-  for (int i = 0; i < items; i++) {
-    ThingSpeak.setField(i + 1, sensorReadings[i]);  //
+  int items = sizeof(sensorReadings) / sizeof(sensorReadings[0]);  // Get the number of items in the sensorReadings array
+  for (int i = 0; i < items; i++) {                                // Loop through the sensor readings
+    ThingSpeak.setField(i + 1, sensorReadings[i]);                 // Set each sensor reading to its corresponding field on ThingSpeak
   }
-  timeClient.update();
-  int day = timeClient.getDay();
-  int hour = timeClient.getHours();
-  int minute = timeClient.getMinutes();
-  sprintf(message, "BSEC Values updated at: %02d/%02d %02d:%02d", day, hour, minute);
-  Serial.println(message);
-  ThingSpeak.setStatus(message);                      //
-  int x = ThingSpeak.writeFields(ChannelID, APIKey);  // write to the specified ThingSpeak channel
-  if (x == 200) {                                     //
-    Serial.println("Channel update successful.");     //
-  } else {                                            //
-    Serial.println(" HTTP error code " + String(x));  //
+  timeClient.update();                   // Update the time from the NTP server
+  int day = timeClient.getDay();         // Get the current day
+  int hour = timeClient.getHours();      // // hour
+  int minute = timeClient.getMinutes();  // // and minute
+
+  sprintf(message,                                        // Format and update the message
+          "BSEC Values updated at: %02d/%02d %02d:%02d",  // // with day, hour, and minute
+          day, hour, minute);                             // // from the values for day, hour, and minute
+
+  Serial.println(message);        // Print the formatted timestamp message to the Serial Monitor
+  ThingSpeak.setStatus(message);  // Set the ThingSpeak channel status with the timestamp message
+
+  int x = ThingSpeak.writeFields(ChannelID, APIKey);  // Write the fields to the specified ThingSpeak channel
+  if (x == 200) {                                     // If the update is successful
+    Serial.println("Channel update successful.");     // Print success message
+  } else {                                            // If there is an error
+    Serial.println(" HTTP error code " + String(x));  // Print the HTTP error code
   }
 }
