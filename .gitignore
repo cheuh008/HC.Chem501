@@ -1,4 +1,1 @@
-.pio
-.vscode
-platformio.ini
-src/secrets.h
+secrets.h

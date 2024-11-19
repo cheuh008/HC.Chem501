@@ -1,18 +1,15 @@
 /*
-  WriteMultipleFields
-  Description: Writes values to fields 1,2,3,4 and status in a single ThingSpeak update every 1 seconds.
-  Hardware: Arduino MKR WiFi 1010  
-
   ThingSpeak ( https://www.thingspeak.com ) is an analytic IoT platform service that allows you to aggregate, visualize, and 
   analyze live data streams in the cloud. Visit https://www.thingspeak.com to sign up for a free account and create a channel.  
   
   Documentation for the ThingSpeak Communication Library for Arduino is in the README.md folder where the library was installed.
   See https://www.mathworks.com/help/thingspeak/index.html for the full ThingSpeak documentation.
-  
-  For licensing information, see the accompanying license file.
-  
-  Copyright 2020, The MathWorks, Inc.
+
+  This sketch shows how the Nicla board could be used to scan / classify certain gases of interest 
+  using the on-board BME688 4-in-1 evnironmental sensor cluster
+
 */
+
 // Including all the required Libraries and Files --------------------------------------------------------------------------------------
 #include <WiFiNINA.h>          // Library for connecting to Wi-Fi
 #include <RTCZero.h>           // Library for internal RTC (Real Time Clock) on Arduino Zero or MKR boards
@@ -23,6 +20,7 @@
 // Defining key variables needed, from secrets.h if avaliable -------------------------------------------------------------------------------
 char ssid[] = SECRET_SSID;               // Wi-Fi network SSID from secrets.h
 char pass[] = SECRET_PASS;               // Wi-Fi network password
+
 unsigned long ChannelID = SECRET_CH_ID;  // ThingSpeak Channel ID for data upload
 const char* APIKey = SECRET_W_APIKEY;    // ThingSpeak API Key for authentication
 
