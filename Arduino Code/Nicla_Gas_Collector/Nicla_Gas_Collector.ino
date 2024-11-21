@@ -16,16 +16,15 @@ void setup() {
 
 void loop() {
   static auto last_index = 0;
-  BHY2.update();   // Update function should be continuously polled
-  if (last_index != bsec2Collector.gas_index()) {
-    last_index = bsec2Collector.gas_index();
-    Serial.println(String((uint32_t)bsec2Collector.timestamp()) + " "
-                   + String(bsec2Collector.temperature()) + " "
-                   + String(bsec2Collector.pressure()) + " "
-                   + String(bsec2Collector.humidity()) + " "
-                   + String(bsec2Collector.gas()) + " "
-                   + String(bsec2Collector.gas_index()));
-  }
+  BHY2.update();  // Update function should be continuously polled
+
+  Serial.println(String((uint32_t)bsec2Collector.timestamp()) + " "
+                 + String(bsec2Collector.temperature()) + " "
+                 + String(bsec2Collector.pressure()) + " "
+                 + String(bsec2Collector.humidity()) + " "
+                 + String(bsec2Collector.gas()) + " "
+                 + String(bsec2Collector.gas_index()));
+}
 }
 
 /*
