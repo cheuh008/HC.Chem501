@@ -70,8 +70,13 @@ void loop() {
   Wire.requestFrom(0x10, 87);                        //
                                                      //
   if (millis() - lastCheck >= 2000) {                // Check sensor values every second
-    lastCheck = millis();                            //
 
+    lastCheck = millis();                            //
+    while (Wire.available()) {                       // slave may send less than requested
+      char c = Wire.read();                          // receive a byte as character
+      Serial.print(c);                               // print the character
+    }
+    
     String sesnorReadings[] = {
        quat.toString()),
        String(int(temp.value())),
