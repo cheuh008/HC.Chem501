@@ -50,5 +50,9 @@ void loop() {
     Serial.print(rotation.toString());
     Serial.print(bsec.toString());
     Serial.print(bsec2.toString());
+
+
+
+
   }
 }
