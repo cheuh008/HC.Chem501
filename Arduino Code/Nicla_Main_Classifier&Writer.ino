@@ -64,15 +64,6 @@ void loop() {
     SensorData.gas2 = bsec2.gas_estimates2();
     SensorData.gas3 = bsec2.gas_estimates3();
     SensorData.bsec2_accu = bsec2.accuracy();
-
-    // if (millis() - printTime >= 1000) {  
-    //   printTime = millis();
-    //   Serial.println(String("gas: ") + String(gas.value()));
-    //   Serial.println(String("Pressure: ") + String(pres.value()));
-    //   Serial.println(String("temperature: ") + String(temp.value(), 2));
-    //   Serial.print(bsec.toString());
-    //   Serial.print(bsec2.toString());
-    //}
 }
 
 void requestEvent() {

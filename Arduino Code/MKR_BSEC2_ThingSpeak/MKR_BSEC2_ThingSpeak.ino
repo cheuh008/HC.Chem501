@@ -1,5 +1,14 @@
 
-#include <Wire.h>  // Library for I2C communication with Nicla (needed for BSEC2)
+// ================================================================================================================================================================================================
+// Note From Authour @cheuh008 @https://github.com/cheuh008/HC.Chem501
+// ================================================================================================================================================================================================
+
+
+// ================================================================================================================================================================================================
+// Libaries
+// ================================================================================================================================================================================================
+
+#include <Wire.h>               // Library for I2C communication with Nicla (needed for BSEC2)
 #include <WiFiNINA.h>          // Library for Wi-Fi connectivity
 #include <WiFiUdp.h>           // Library for UDP communication over Wi-Fi
 #include <RTCZero.h>           // Library for Real Time Clock (RTC) on MKR boards
@@ -10,10 +19,6 @@
 // ================================================================================================================================================================================================
 // iniitlising sesnors global variable
 // ================================================================================================================================================================================================
-
-
-WiFiClient client;  // Client to establish Wi-Fi connections
-RTCZero rtc;        // Real-time clock instance for managing date and time
 
 struct BsecData {
   uint16_t iaq;
@@ -35,36 +40,25 @@ struct SenosrData {
   uint8_t gas3;
   uint8_t bsec2_accu;
 };
+BsecData bsecData;
+SenosrData sensorData;
 
-BsecData BsecData;
-SensorData SensorData;
+WiFiClient client;  // Client to establish Wi-Fi connections
+RTCZero rtc;        // Real-time clock instance for managing date and time
+
 
 // ================================================================================================================================================================================================
 // Inital Setup Function
 // ================================================================================================================================================================================================
 
 void setup() {
-  Wire.begin();
+  Wire.begin(0x10);
+  Wire.onRequest(requestEvent);
   Serial.begin(9600);
-  while (!Serial)
-    (1);
-  Serial.println("Serialed");
   BHY2Host.begin();
   rtc.begin();
   wifiConnect();
-  BHY2.begin();
-  Wire.begin(0x10);
-  Wire.onRequest(requestEvent);
-  gas.begin();
-  pres.begin();
-  temp.begin();
-  bsec.begin();
-  sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
-  bsec2.begin();
-  Serial.println("Inited");
-
 }
-
 // ================================================================================================================================================================================================
 // Main Function Loop
 // ================================================================================================================================================================================================
@@ -72,51 +66,37 @@ void setup() {
 void loop() {
 
   if (WiFi.status() != WL_CONNECTED) wifiConnect();
-  static auto lastCheck = millis();  //
 
+  static auto lastCheck = millis();
   BHY2Host.update();
-  Wire.requestFrom(0x10, 87);
+
   if (millis() - lastCheck >= 1000) {
+
     lastCheck = millis();
-    Wire.requestFrom(0x10, sizeof(SensorData));
-    if (Wire.available() >= sizeof(SensorData)) {
-      Wire.readBytes((char*)&SensorData, sizeof(SensorData));
-    }
-    BsecData.iaq = bsec.iaq();
-    BsecData.iaq_s = bsec.iaq_s();
-    BsecData.b_voc_eq = bsec.b_voc_eq();
-    BsecData.co2_eq = bsec.co2_eq();
-    BsecData.bsec_accu = bsec.accuracy();
-    BsecData.comp_t = bsec.comp_t();
-    BsecData.comp_h = bsec.comp_h();
-    BsecData.comp_g = bsec.comp_g();
-    SensorData.gasVal = gas.value();
-    SensorData.presVal = gas.value();
-    SensorData.tempValue = gas.value();
-    SensorData.gas0 = bsec2.gas_estimates0();
-    SensorData.gas1 = bsec2.gas_estimates1();
-    SensorData.gas2 = bsec2.gas_estimates2();
-    SensorData.gas3 = bsec2.gas_estimates3();
-    SensorData.bsec2_accu = bsec2.accuracy();
+    sendData(bsecData, "BSEC Values ", ChannelIDs[2], APIKeys[2]);
+    sendData(sensorData, "Gases detected ", ChannelIDs[2], APIKeys[2]);
   }
 }
 
-void sendData(data data[], String msg, ChannelID, APIKey) {
-  Serial.print(msg + ": ");
-  int items = sizeof(data) / sizeof(data[0]);           // Get the number of items in the sensorReadings array
-  for (int i = 0; i < items; i++) {                     //
-    ThingSpeak.setField(i + 1, data[i]);
+void sendData(struct data[], String msg, unsigned long ChannelID, const char* APIKey) {
+  Wire.requestFrom(0x10, sizeof(data));
+  if (Wire.available() >= sizeof(data)) {
+    Wire.readBytes((char*)&data, sizeof(data));
+    Serial.print(msg + ": ");
+    int items = sizeof(data) / sizeof(data[0]);           // Get the number of items in the sensorReadings array
+    for (int i = 0; i < items; i++) {                     //
+      ThingSpeak.setField(i + 1, data[i]);
+    }
+    String msg += "updated at: " + printTime();        // Construct the status message with the current timestamp
+    ThingSpeak.setStatus(msg);                          // Set the ThingSpeak channel status with the timestamp message
+    int x = ThingSpeak.writeFields(ChannelID, APIKey);  // Write the fields to ThingSpeak
+    if (x == 200) {                                     // If the update is successful
+      Serial.println("Channel update successful.");     // Print success message
+    }
+    else {                                            // If there was an error with the HTTP request
+      Serial.println(" HTTP error code " + String(x));  // Print HTTP error code to help debug
+    }
   }
-  String msg += " updated at: " + printTime();        // Construct the status message with the current timestamp
-  ThingSpeak.setStatus(msg);                          // Set the ThingSpeak channel status with the timestamp message
-  int x = ThingSpeak.writeFields(ChannelID, APIKey);  // Write the fields to ThingSpeak
-  if (x == 200) {                                     // If the update is successful
-    Serial.println("Channel update successful.");     // Print success message
-  }
-  else {                                            // If there was an error with the HTTP request
-    Serial.println(" HTTP error code " + String(x));  // Print HTTP error code to help debug
-  }
-}
 }
 // ================================================================================================================================================================================================
 // Function to connect to Wi-Fi and initialize the ThingSpeak client
