@@ -50,12 +50,13 @@ RTCZero rtc;        // Real-time clock instance for managing date and time
 // ================================================================================================================================================================================================
 
 void setup() {
-  Wire.begin(0x10);
-  Wire.onRequest(requestEvent);
-  Serial.begin(9600);
+  Serial.begin(115200);
+  while (!Serial) { (1); }
   BHY2Host.begin();
   rtc.begin();
   wifiConnect();
+  Wire.begin();
+  Wire.onReceive(receiveEvent);
 }
 // ================================================================================================================================================================================================
 // Main Function Loop
@@ -65,11 +66,20 @@ void loop() {
   BHY2Host.update();
   static auto lastCheck = millis();
   if (WiFi.status() != WL_CONNECTED) wifiConnect();
-  if (Wire.requestFrom() == sizeof(SensorData)) {
+  Wire.requestFrom(0x10, sizeof(SensorData))) {
     Wire.readBytes((char*)&sensorData, sizeof(SensorData));
     sendData(0);
     sendData(1);
   }
+}
+
+void receiveEvent(size_t howMany) {
+  int receivedValue = Wire.read(); // Read received value from Master
+
+  Serial.print("Received value: ");
+  Serial.println(receivedValue);
+
+  digitalWrite(ledPin, receivedValue % 2); // Toggle LED based on received value
 }
 
 // ================================================================================================================================================================================================

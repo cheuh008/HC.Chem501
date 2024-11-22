@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include "Arduino.h"
 #include "Arduino_BHY2.h"
+#define ESLOV_ADDRESS 0x08
 
 Sensor gas(SENSOR_ID_GAS);
 Sensor pres(SENSOR_ID_BARO);
@@ -29,62 +30,61 @@ struct SensorData {
   uint8_t bsec2_accu;
 };
 
-SensorData sensorData;
+SensorData data;
 
 void setup() {
-  // Serial.begin(115200);
+  Serial.begin(115200);
+  Wire.begin()
+  Serial.println("Initialsing Sensors");
+  sensorInit();
+}
+
+void loop() {
+  BHY2.update();
+  static auto printTime = millis();  //
+  if (millis() - printTime >= 1000) {
+    printTime = millis();
+    serialiser();
+    datalogger();
+    wireData();
+  }
+}
+
+void wireData() {
+  Wire.beginTransmission(ESLOV_ADDRESS);
+  Wire.write((uint8_t *)&data, sizeof(data));  // Send the struct as raw bytes
+  Wire.endTransmission();
+}
+
+void sensorInit() {
   BHY2.begin();
-  while (!BHY2.begin()) { (1); }
-  Wire.begin(0x10);              // join i2c bus with address #2
-  Wire.onRequest(requestEvecnt);  // register event
   gas.begin();
   pres.begin();
   temp.begin();
   bsec.begin();
-  while (!bsec.begin()) { (1); }
-  sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
+  sensortec.bhy2_bsec2_setConfigString(ok am BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
   bsec2.begin();
-  while (!bsec2.begin()) { (1); }
+  if (!BHY2.begin() || !temp.begin() || !bsec.begin() || !bsec2.begin()) {
+    Serial.println("Sensor initialisation failed!");
+    while (1) {}
+  }
+  Serial.println("Sensors initialised.");
 }
 
-void loop() {
-  static auto printTime = millis();  //
-  BHY2.update();                     // Update function should be continuously polled
-  sensorData.iaq = bsec.iaq();
-  sensorData.iaq_s = bsec.iaq_s();
-  sensorData.b_voc_eq = bsec.b_voc_eq();
-  sensorData.co2_eq = bsec.co2_eq();
-  sensorData.bsec_accu = bsec.accuracy();
-  sensorData.comp_t = bsec.comp_t();
-  sensorData.comp_h = bsec.comp_h();
-  sensorData.comp_g = bsec.comp_g();
-  sensorData.gasVal = gas.value();
-  sensorData.presVal = pres.value();
-  sensorData.tempValue = temp.value();
-  sensorData.gas0 = bsec2.gas_estimates0();
-  sensorData.gas1 = bsec2.gas_estimates1();
-  sensorData.gas2 = bsec2.gas_estimates2();
-  sensorData.gas3 = bsec2.gas_estimates3();
-  sensorData.bsec2_accu = bsec2.accuracy();
-
-    if (millis() - printTime >= 1000) {  
-    printTime = millis();
-    Serial.println(String("gas: ") + String(gas.value()));
-    Serial.println(String("Pressure: ") + String(pres.value()));
-    Serial.println(String("temperature: ") + String(temp.value(), 2));
-    Serial.print(bsec.toString());
-    Serial.print(bsec2.toString());
-  }
+void serialiser() {
+  Serial.println(String("gas: ") + String(gas.value()));
+  Serial.println(String("Pressure: ") + String(pres.value()));
+  Serial.println(String("temperature: ") + String(temp.value(), 2));
+  Serial.print(bsec.toString());
+  Serial.print(bsec2.toString());
 }
 
-void requestEvent() {
-  static uint8_t batch = 0;
-  const uint8_t chunkSize = 32;  // Chunk size to match buffer limit
-  uint8_t* dataPtr = (uint8_t*)&sensorData;
-  if (batch == 0) {
-    Wire.write(dataPtr, chunkSize);  // Send first chunk
-  } else if (batch == 1) {
-    Wire.write(dataPtr + chunkSize, sizeof(SensorData) - chunkSize);  // Send remaining bytes
-  }
-  batch = (batch + 1) % 2;  // Toggle batch
+void datalogger() {
+  data = {
+    bsec.iaq(), bsec.iaq_s(), bsec.b_voc_eq(), bsec.co2_eq(), bsec.accuracy(),
+    bsec.comp_t(), bsec.comp_h(), bsec.comp_g(), gas.value(), pres.value(),
+    temp.value(), bsec2.gas_estimates0(), bsec2.gas_estimates1(),
+    bsec2.gas_estimates2(), bsec2.gas_estimates3(), bsec2.accuracy()
+  };
+  Serial.println("Data: Logged");
 }
