@@ -88,6 +88,7 @@ void loop() {
     Serial.println("Gas Estimate 1: " + String(SensorData.gas1));
     Serial.println("Gas Estimate 2: " + String(SensorData.gas2));
     Serial.println("Gas Estimate 3: " + String(SensorData.gas3));
+    Serial.println("Accuracy: " + String(SensorData.gas_accu));
 
     // ThingSpeak.setField(1, gas.value());      // Assign each sensor reading to the corresponding field on ThingSpeak
     // ThingSpeak.setField(2, temp.value());     //
