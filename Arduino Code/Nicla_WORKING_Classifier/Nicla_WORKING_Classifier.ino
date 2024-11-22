@@ -51,8 +51,5 @@ void loop() {
     Serial.print(bsec.toString());
     Serial.print(bsec2.toString());
 
-
-
-
   }
 }
