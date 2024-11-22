@@ -8,7 +8,7 @@
 // Libaries
 // ================================================================================================================================================================================================
 
-#include <Wire.h>               // Library for I2C communication with Nicla (needed for BSEC2)
+#include <Wire.h>              // Library for I2C communication with Nicla (needed for BSEC2)
 #include <WiFiNINA.h>          // Library for Wi-Fi connectivity
 #include <WiFiUdp.h>           // Library for UDP communication over Wi-Fi
 #include <RTCZero.h>           // Library for Real Time Clock (RTC) on MKR boards
@@ -20,7 +20,7 @@
 // iniitlising sesnors global variable
 // ================================================================================================================================================================================================
 
-struct BsecData {
+struct SenosrData {
   uint16_t iaq;
   uint16_t iaq_s;
   float b_voc_eq;
@@ -29,8 +29,6 @@ struct BsecData {
   float comp_t;
   float comp_h;
   uint32_t comp_g;
-}
-struct SenosrData {
   float gasVal;
   float presVal;
   float tempValue;
@@ -40,7 +38,7 @@ struct SenosrData {
   uint8_t gas3;
   uint8_t bsec2_accu;
 };
-BsecData bsecData;
+
 SenosrData sensorData;
 
 WiFiClient client;  // Client to establish Wi-Fi connections
@@ -64,38 +62,35 @@ void setup() {
 // ================================================================================================================================================================================================
 
 void loop() {
-
-  if (WiFi.status() != WL_CONNECTED) wifiConnect();
-
-  static auto lastCheck = millis();
   BHY2Host.update();
-
-  if (millis() - lastCheck >= 1000) {
-
-    lastCheck = millis();
-    sendData(bsecData, "BSEC Values ", ChannelIDs[2], APIKeys[2]);
-    sendData(sensorData, "Gases detected ", ChannelIDs[2], APIKeys[2]);
+  static auto lastCheck = millis();
+  if (WiFi.status() != WL_CONNECTED) wifiConnect();
+  if (Wire.requestFrom() == sizeof(SensorData)) {
+    Wire.readBytes((char*)&sensorData, sizeof(SensorData));
+    sendData(0);
+    sendData(1);
   }
 }
 
-void sendData(struct data[], String msg, unsigned long ChannelID, const char* APIKey) {
-  Wire.requestFrom(0x10, sizeof(data));
-  if (Wire.available() >= sizeof(data)) {
-    Wire.readBytes((char*)&data, sizeof(data));
-    Serial.print(msg + ": ");
-    int items = sizeof(data) / sizeof(data[0]);           // Get the number of items in the sensorReadings array
-    for (int i = 0; i < items; i++) {                     //
-      ThingSpeak.setField(i + 1, data[i]);
-    }
-    String msg += "updated at: " + printTime();        // Construct the status message with the current timestamp
-    ThingSpeak.setStatus(msg);                          // Set the ThingSpeak channel status with the timestamp message
-    int x = ThingSpeak.writeFields(ChannelID, APIKey);  // Write the fields to ThingSpeak
-    if (x == 200) {                                     // If the update is successful
-      Serial.println("Channel update successful.");     // Print success message
-    }
-    else {                                            // If there was an error with the HTTP request
-      Serial.println(" HTTP error code " + String(x));  // Print HTTP error code to help debug
-    }
+// ================================================================================================================================================================================================
+// Function to send data to ThingSpeak client
+// ================================================================================================================================================================================================
+
+void sendData(int batch) {
+  int startField = batch * 8;
+  String msg;
+  float* dataPtr = (float*)&receivedData;
+  for (int i = 0; i < 8; i++) {
+    int fieldIndex = startField + i;
+    if (fieldIndex >= (sizeof(SensorData) / sizeof(float))) break;  // Prevent overflow
+    ThingSpeak.setField(i + 1, dataPtr[fieldIndex]);                // Set ThingSpeak field
+  }
+  msg = (batch == 0) ? "BSEC data updated at: " + printTime() : "Gas data updated at: " + printTime() ThingSpeak.setStatus(msg);
+  int result = ThingSpeak.writeFields(channelIDs[batch + 2], APIKeys[batch + 2]);
+  if (result == 200) {
+    Serial.println("Channel " ++String(batch + 2) + " update successful: ");
+  } else {
+    Serial.println("HTTP error code: " + String(result));
   }
 }
 // ================================================================================================================================================================================================
@@ -104,11 +99,12 @@ void sendData(struct data[], String msg, unsigned long ChannelID, const char* AP
 
 void wifiConnect() {
 
-  Serial.println("Connecting to WiFi...");        // Debug message indicating Wi-Fi connection attempt
-  while (WiFi.status() != WL_CONNECTED) {         // Wait for Wi-Fi connection to be established
-    WiFi.begin(SECRET_SSID, SECRET_PASS);         // Initialize Wi-Fi using the provided SSID and password
-    delay(5000);                                  // Wait 5 seconds before attempting to reconnect
-  } getTime();                                      // Call the function to get the current time via NTP
+  Serial.println("Connecting to WiFi...");  // Debug message indicating Wi-Fi connection attempt
+  while (WiFi.status() != WL_CONNECTED) {   // Wait for Wi-Fi connection to be established
+    WiFi.begin(SECRET_SSID, SECRET_PASS);   // Initialize Wi-Fi using the provided SSID and password
+    delay(5000);                            // Wait 5 seconds before attempting to reconnect
+  }
+  getTime();                                      // Call the function to get the current time via NTP
   Serial.print("Time is: ");                      // Output message showing the current time
   Serial.println(printTime());                    // Print the current time formatted by the printTime() function
   ThingSpeak.begin(client);                       // Initialize the ThingSpeak client for data communication
@@ -129,12 +125,11 @@ void getTime() {
   if (numberOfTries == maxTries) {                       // If the maximum retries are reached
     Serial.print("NTP unreachable!!");                   // Print error message
     wifiConnect();                                       //
-  }
-  else {
-    Serial.print("Epoch received: ");                    // Print the fetched epoch time
-    Serial.println(epoch);                               // Print the actual epoch value
-    rtc.setEpoch(epoch);                                 // Set the RTC with the fetched epoch time
-    Serial.println();                                    // Newline for readability
+  } else {
+    Serial.print("Epoch received: ");  // Print the fetched epoch time
+    Serial.println(epoch);             // Print the actual epoch value
+    rtc.setEpoch(epoch);               // Set the RTC with the fetched epoch time
+    Serial.println();                  // Newline for readability
   }
 }
 
