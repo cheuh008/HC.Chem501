@@ -11,38 +11,41 @@ This project involves collecting environmental sensor data from the Bosch Sensor
 ## Hardware Requirements
 
 - Arduino MKR WiFi 1010
-- Bosch Sensortec Environmental Cluster BME688 (BSEC)
+- Arduino Nicla Sense Me
 - Internet connection
 
 ## Software Requirements
 
 - Arduino IDE
 - Libraries:
+  - `Arduino_BHY2`
+  - `Arduino_BHY2Host`
+  - `ThingSpeak`
   - `WiFiNINA`
   - `RTCZero`
-  - `ThingSpeak`
-  - `Arduino_BHY2Host`
+
 
 ## Setup Instructions
 
 1. **Connect the Hardware:**
 
-   - Connect the BSEC sensor to the MKR WiFi 1010 board using appropriate pins.
-
+   - Connect the Nicla Sense Me to the MKR WiFi 1010 board Via Eslov (or I2C should work too)
+     
 2. **Install Required Libraries:**
 
    - Open the Arduino IDE.
    - Go to **Sketch** > **Include Library** > **Manage Libraries**.
    - Search for and install the following libraries:
-     - `WiFiNINA`
-     - `RTCZero`
-     - `ThingSpeak`
-     - `Arduino_BHY2Host`
+      - `Arduino_BHY2`
+      - `Arduino_BHY2Host`
+      - `ThingSpeak`
+      - `WiFiNINA`
+      - `RTCZero`
 
 3. **Configure ThingSpeak:**
 
    - Create an account on [ThingSpeak](https://www.thingspeak.com).
-   - Create a new channel and note down the Channel ID and Write API Key.
+   - Create deseried no. of channels (up to 4) and note down the Channel IDs and Write API Keys.
 
 4. **Setup WiFi Credentials:**
    - Create a `secrets.h` file with your network SSID and password, ThingSpeak Channel ID, and Write API Key.
