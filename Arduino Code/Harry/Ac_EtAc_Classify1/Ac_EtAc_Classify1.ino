@@ -60,22 +60,24 @@ void loop() {
   static auto printTime = millis();  //
   BHY2.update();
   if (millis() - printTime >= 1000) {  // Update function should be continuously polled
-    BsecData.iaq = bsec.iaq();
-    BsecData.iaq_s = bsec.iaq_s();
-    BsecData.b_voc_eq = bsec.b_voc_eq();
-    BsecData.co2_eq = bsec.co2_eq();
-    BsecData.bsec_accu = bsec.accuracy();
-    BsecData.comp_t = bsec.comp_t();
-    BsecData.comp_h = bsec.comp_h();
-    BsecData.comp_g = bsec.comp_g();
-    SensorData.gasVal = gas.value();
-    SensorData.presVal = gas.value();
-    SensorData.tempValue = gas.value();
-    SensorData.gas0 = bsec2.gas_estimates0();
-    SensorData.gas1 = bsec2.gas_estimates1();
-    SensorData.gas2 = bsec2.gas_estimates2();
-    SensorData.gas3 = bsec2.gas_estimates3();
-    SensorData.bsec2_accu = bsec2.accuracy();
+
+
+    Serial.println("IAQ: " + String(SensorData.iaq));
+    Serial.println("IAQ S: " + String(SensorData.iaq_s));
+    Serial.println("B VOC EQ: " + String(SensorData.b_voc_eq));
+    Serial.println("CO2 EQ: " + String(SensorData.co2_eq));
+    Serial.println("BSEC Accuracy: " + String(SensorData.bsec_accu));
+    Serial.println("Comp T: " + String(SensorData.comp_t));
+    Serial.println("Comp H: " + String(SensorData.comp_h));
+    Serial.println("Comp G: " + String(SensorData.comp_g));
+    Serial.println("Gas Value: " + String(SensorData.gasVal));
+    Serial.println("Pressure Value: " + String(SensorData.presVal));
+    Serial.println("Temperature Value: " + String(SensorData.tempValue));
+    Serial.println("Gas Estimate 0: " + String(SensorData.gas0));
+    Serial.println("Gas Estimate 1: " + String(SensorData.gas1));
+    Serial.println("Gas Estimate 2: " + String(SensorData.gas2));
+    Serial.println("Gas Estimate 3: " + String(SensorData.gas3));
+    Serial.println("Accuracy: " + String(SensorData.gas_accu));
 
     sendData(BsecData, "BSEC Data Updated at: ", )
 
@@ -87,32 +89,56 @@ void loop() {
       //   Serial.println(String("temperature: ") + String(temp.value(), 2));
       //   Serial.print(bsec.toString());
       //   Serial.print(bsec2.toString());
+
+
+
+    // ThingSpeak.setField(1, gas.value());      // Assign each sensor reading to the corresponding field on ThingSpeak
+    // ThingSpeak.setField(2, temp.value());     //
+    // ThingSpeak.setField(3, pres.value());     // Assign each sensor reading to the corresponding field on ThingSpeak
+    // ThingSpeak.setField(4, bsec.iaq());       //
+    // ThingSpeak.setField(5, bsec.iaq_s());     // IAQ value (Indoor Air Quality) when stationary
+    // ThingSpeak.setField(6, bsec.b_voc_eq());  // Breath VOC equivalent (ppm)
+    // ThingSpeak.setField(7, bsec.co2_eq());    // CO2 equivalent (ppm), typically starts from 400 ppm
+    // ThingSpeak.setField(8, bsec.accuracy());  // Assign each sensor reading to the corresponding field on ThingSpeak
+
+    // String msg += "Sensors updated at: " + printTime();  // Construct the status message with the current timestamp
+    // ThingSpeak.setStatus(msg);                           // Set the ThingSpeak channel status with the timestamp message
+
+    // int x = ThingSpeak.writeFields(ChannelID[0], APIKeya[0]);  // Write the fields to ThingSpeak
+    // if (x == 200) {                                            // If the update is successful
+    //   Serial.println("Channel update successful.");            // Print success message
+    // } else {                                                   // If there was an error with the HTTP request
+    //   Serial.println(" HTTP error code " + String(x));         // Print HTTP error code to help debug
+    // }
+
+    // ThingSpeak.setField(1, bsec.comp_t();    // Compensated temperature (in Celsius)
+    // ThingSpeak.setField(2, bsec.comp_h()),    // Compensated humidity (in %)
+    // ThingSpeak.setField(3, bsec.comp_g())     // Compensated gas resistance (Ohms)
+    // ThingSpeak.setField(4, bsec.iaq());                        //
+    // ThingSpeak.setField(5, bsec.iaq_s());                      //
+    // ThingSpeak.setField(6, bsec.b_voc_eq());                   // Assign each sensor reading to the corresponding field on ThingSpeak
+    // ThingSpeak.setField(7, bsec.co2_eq());                     //
+    // ThingSpeak.setField(8, bsec.accuracy());                   // Assign each sensor reading to the corresponding field on ThingSpeak
+
+    // String msg += "BSEC Values updated at: " + printTime();        // Construct the status message with the current timestamp
+    // ThingSpeak.setStatus(msg);                                 // Set the ThingSpeak channel status with the timestamp message
+
+    // int x = ThingSpeak.writeFields(ChannelID[1], APIKeya[1]);  // Write the fields to ThingSpeak
+    // if (x == 200) {                                            // If the update is successful
+    //   Serial.println("Channel update successful.");            // Print success message
+    // } else {                                                   // If there was an error with the HTTP request
+    //   Serial.println(" HTTP error code " + String(x));         // Print HTTP error code to help debug
+    // }
+
+    //Debug...
+    // Serial.println(String("gas: ") + String(gas.value()));
+    // Serial.println(String("temperature: ") + String(temp.value(), 2));
+    // Serial.println(String("temperature: ") + String(pres.value(), 2));
+    // Serial.print(bsec.toString());
   }
 }
 
-void sendData(data data[], String msg, ChannelID, APIKey) {
-  Serial.print(msg + ": ");
-  int items = sizeof(data) / sizeof(data[0]);           // Get the number of items in the sensorReadings array
-  for (int i = 0; i < items; i++) {                     //
-    ThingSpeak.setField(i + 1, data[i]);                // Assign each sensor reading to the corresponding field on ThingSpeak
-    Serial.print(data[i]);                              //
-    Serial.print(", ");                                 //
-    if (data[i] != 0) allZeros = false;                 // If any value is non-zero, set the flag to false
-  }                                                     //
-  Serial.println();                                     //
-  if (!allZeros) {                                      //
-    String msg += " updated at: " + printTime();        // Construct the status message with the current timestamp
-    ThingSpeak.setStatus(msg);                          // Set the ThingSpeak channel status with the timestamp message
-    Serial.println(msg);                                // Print the status message to the Serial Monitor
-    int x = ThingSpeak.writeFields(ChannelID, APIKey);  // Write the fields to ThingSpeak
-    if (x == 200) {                                     // If the update is successful
-      Serial.println("Channel update successful.");     // Print success message
-    }
-    else {                                            // If there was an error with the HTTP request
-      Serial.println(" HTTP error code " + String(x));  // Print HTTP error code to help debug
-    }
-  }
-}
+
 
 // ================================================================================================================================================================================================
 // Function to connect to Wi-Fi and initialize the ThingSpeak client
