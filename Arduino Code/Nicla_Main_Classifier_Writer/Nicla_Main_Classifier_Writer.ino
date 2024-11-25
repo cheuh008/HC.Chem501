@@ -36,7 +36,7 @@ void setup() {
   BHY2.begin();
   while (!BHY2.begin()) { (1); }
   Wire.begin(0x10);              // join i2c bus with address #2
-  Wire.onRequest(requestEvent);  // register event
+  Wire.onRequest(requestEvecnt);  // register event
   gas.begin();
   pres.begin();
   temp.begin();
@@ -66,6 +66,15 @@ void loop() {
   sensorData.gas2 = bsec2.gas_estimates2();
   sensorData.gas3 = bsec2.gas_estimates3();
   sensorData.bsec2_accu = bsec2.accuracy();
+
+    if (millis() - printTime >= 1000) {  
+    printTime = millis();
+    Serial.println(String("gas: ") + String(gas.value()));
+    Serial.println(String("Pressure: ") + String(pres.value()));
+    Serial.println(String("temperature: ") + String(temp.value(), 2));
+    Serial.print(bsec.toString());
+    Serial.print(bsec2.toString());
+  }
 }
 
 void requestEvent() {
