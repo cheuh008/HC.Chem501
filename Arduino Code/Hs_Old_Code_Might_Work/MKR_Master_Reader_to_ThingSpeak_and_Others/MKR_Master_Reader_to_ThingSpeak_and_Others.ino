@@ -1,9 +1,18 @@
-#include <Wire.h>        // Library for I2C communication with Nicla (needed for BSEC2)
-#include <WiFiNINA.h>    // Library for Wi-Fi connectivity
-#include <WiFiUdp.h>     // Library for UDP communication over Wi-Fi
-#include <RTCZero.h>     // Library for Real Time Clock (RTC) on MKR boards
-#include "secrets.h"     // Include file with sensitive info like SSID, password, ThingSpeak API keys
-#include "ThingSpeak.h"  // ThingSpeak library for cloud data logging
+
+#include <Wire.h>              // Library for I2C communication with Nicla (needed for BSEC2)
+#include <WiFiNINA.h>          // Library for Wi-Fi connectivity
+#include <WiFiUdp.h>           // Library for UDP communication over Wi-Fi
+#include <RTCZero.h>           // Library for Real Time Clock (RTC) on MKR boards
+#include "secrets.h"           // Include file with sensitive info like SSID, password, ThingSpeak API keys
+#include "ThingSpeak.h"        // ThingSpeak library for cloud data logging
+#include <Arduino_BHY2Host.h>  //
+
+
+SensorXYZ accel(SENSOR_ID_ACC);
+SensorXYZ gyro(SENSOR_ID_GYRO);
+Sensor temp(SENSOR_ID_TEMP);
+Sensor gas(SENSOR_ID_GAS);
+SensorQuaternion rotation(SENSOR_ID_RV);
 
 WiFiClient client;  // Client to establish Wi-Fi connections
 RTCZero rtc;        // Real-time clock instance for managing date and time
@@ -14,6 +23,15 @@ uint8_t receivedData[5];
 void setup() {
   Wire.begin();          // join i2c bus (address optional for master)
   Serial.begin(115200);  // start serial for output debug
+
+  BHY2Host.begin();
+
+  accel.begin();
+  gyro.begin();
+  temp.begin();
+  gas.begin();
+  rotation.begin();
+
   rtc.begin();
   wifiConnect();
 }
@@ -22,9 +40,14 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) wifiConnect();
 
   static unsigned long lastCheck  = millis();
+  BHY2Host.update();
 
   if (millis() - lastCheck  >= 2000) {
     lastCheck  = millis();
+    Serial.println(String("acceleration: ") + accel.toString());
+    Serial.println(String("gyroscope: ") + gyro.toString());
+
+
 
     Wire.requestFrom(2, size);        // Request 5 bytes from slave device #2
     Serial.print("Received data: ");  // Print received data
