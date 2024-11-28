@@ -179,6 +179,20 @@ Visualizes all fields from both channels in a single grid.
  #### Individual Plots:
 
 Each field’s data is plotted and saved as a separate PNG file in the plots/ folder.
+![Accuracy](plots/Accuracy_plot.png)
+![Acetone](plots/Acetone_plot.png)
+![Ambient](plots/Ambient_plot.png)
+![BSEC Accuracy](plots/BSEC_Accuracy_(%3)_plot.png)
+![Breath VOC Equivalent](plots/Breath_VOC_Equivalent_(ppm)_plot.png)
+![CO2 Equivalent](plots/CO2_Equivalent_(ppm)_plot.png)
+![Compensated Humidity](plots/Compensated_Humidity_(Relative_%)_plot.png)
+![Compensated Temperature](plots/Compensated_Temperature_(°C)_plot.png)
+![Ethanol](plots/Ethanol_plot.png)
+![Ethyl Acetate](plots/Ethyl_Acetate_plot.png)
+![Gas Resistance](plots/Gas_Resistance_(Ohms)_plot.png)
+![Pressure](plots/Pressure_(Pa)_plot.png)
+![Stationary IAQ](plots/Stationary_IAQ_plot.png)
+![All Plots Grid](plots/all_plots_grid.png)
 ---
 ## License 
 Licensed under GNU
