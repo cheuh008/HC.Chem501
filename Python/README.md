@@ -179,21 +179,107 @@ Visualizes all fields from both channels in a single grid.
  #### Individual Plots:
 
 Each field’s data is plotted and saved as a separate PNG file in the plots/ folder.
-![Accuracy](plots/Accuracy_plot.png)
-![Acetone](plots/Acetone_plot.png)
-![Ambient](plots/Ambient_plot.png)
-![BSEC Accuracy](plots/BSEC_Accuracy_(%3)_plot.png)
-![Breath VOC Equivalent](plots/Breath_VOC_Equivalent_(ppm)_plot.png)
-![CO2 Equivalent](plots/CO2_Equivalent_(ppm)_plot.png)
-![Compensated Humidity](plots/Compensated_Humidity_(Relative_%)_plot.png)
-![Compensated Temperature](plots/Compensated_Temperature_(°C)_plot.png)
-![Ethanol](plots/Ethanol_plot.png)
-![Ethyl Acetate](plots/Ethyl_Acetate_plot.png)
-![Gas Resistance](plots/Gas_Resistance_(Ohms)_plot.png)
-![Pressure](plots/Pressure_(Pa)_plot.png)
-![Stationary IAQ](plots/Stationary_IAQ_plot.png)
-![All Plots Grid](plots/all_plots_grid.png)
----
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualization Plots</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 4 columns */
+      gap: 20px; /* Space between images */
+      padding: 20px;
+    }
+
+    .grid-item {
+      text-align: center;
+    }
+
+    .grid-item img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd; /* Optional styling */
+      border-radius: 8px; /* Rounded corners */
+    }
+
+    .grid-item span {
+      display: block;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Visualization Plots</h1>
+
+  <div class="grid-container">
+    <div class="grid-item">
+      <img src="plots/Accuracy_plot.png" alt="Accuracy">
+      <span>Accuracy</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Acetone_plot.png" alt="Acetone">
+      <span>Acetone</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Ambient_plot.png" alt="Ambient">
+      <span>Ambient</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/BSEC_Accuracy_(%3)_plot.png" alt="BSEC Accuracy">
+      <span>BSEC Accuracy</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Breath_VOC_Equivalent_(ppm)_plot.png" alt="Breath VOC Equivalent">
+      <span>Breath VOC Equivalent</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/CO2_Equivalent_(ppm)_plot.png" alt="CO2 Equivalent">
+      <span>CO2 Equivalent</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Compensated_Humidity_(Relative_%)_plot.png" alt="Compensated Humidity">
+      <span>Compensated Humidity</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Compensated_Temperature_(°C)_plot.png" alt="Compensated Temperature">
+      <span>Compensated Temperature</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Ethanol_plot.png" alt="Ethanol">
+      <span>Ethanol</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Ethyl_Acetate_plot.png" alt="Ethyl Acetate">
+      <span>Ethyl Acetate</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Gas_Resistance_(Ohms)_plot.png" alt="Gas Resistance">
+      <span>Gas Resistance</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Pressure_(Pa)_plot.png" alt="Pressure">
+      <span>Pressure</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/Stationary_IAQ_plot.png" alt="Stationary IAQ">
+      <span>Stationary IAQ</span>
+    </div>
+    <div class="grid-item">
+      <img src="plots/all_plots_grid.png" alt="All Plots Grid">
+      <span>All Plots Grid</span>
+    </div>
+  </div>
+</body>
+</html>
+
 ## License 
 Licensed under GNU
 
