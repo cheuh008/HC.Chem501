@@ -12,7 +12,7 @@ This Python project is designed to fetch, clean, and visualize data from ThingSp
 
 1. **Dynamic Data Handling**:
    - Fetches data from ThingSpeak channels.
-   - Cleans and stores data dynamically in a SQLite database.
+   - Cleans and stores data dynamically in an SQLite database.
    - Supports multiple channels and customizable fields.
 
 2. **Visualization**:
@@ -25,10 +25,19 @@ This Python project is designed to fetch, clean, and visualize data from ThingSp
 
 4. **Reusable Architecture**:
    - Modularized database, visualization, and configuration management.
+
+---
+## How It Works
+
+1. The `main.py` script calls `dbHandler.py` to fetch data from ThingSpeak channels using their API keys.
+2. The data is cleaned and stored in a SQLite database (`thingspeak_data.db`).
+3. Plots are generated using `plotting.py`, which creates a 4x4 grid and individual PNG files for each field.
+4. Results are saved in the `plots/` directory and displayed in the terminal.
+
 ---
 
 ## File Structure
-
+``` bash 
 Project Root
 ├── main.py                 # Main script to execute the project.
 ├── dbHandler.py            # Manages database creation, data fetching, and storage.
@@ -38,6 +47,8 @@ Project Root
 ├── config.json             # Stores channel configurations (auto-generated).
 ├── plots/                  # Folder where all plots are saved.
 ├── requirements.txt        # Python dependencies.
+``` 
+
 ---
 ## Prerequisites
 
@@ -53,9 +64,9 @@ Project Root
 
 ## Usage
 
-Step 1: Configure Channels
+### Step 1: Configure Channels
 
-Edit keys.json to include your ThingSpeak API keys in the following format:
+ - Edit keys.json to include your ThingSpeak API keys in the following format:
 ```json
 
 {
@@ -65,7 +76,7 @@ Edit keys.json to include your ThingSpeak API keys in the following format:
   }
 }
 ```
-The config.json file will be auto-generated with default values for channels. Customize it as needed:
+ - The config.json file will be auto-generated with default values for channels. Customize it as needed:
 ```json 
 {
   "channel_1": {
@@ -86,78 +97,63 @@ The config.json file will be auto-generated with default values for channels. Cu
   }
 }
 ```
+
+### Step 2: Run the Main Script
+
+ - Execute the main.py script:
+
+``` bash 
+python main.py
+```
+
+### Step 3: View Results
+
+ - Database: The data is stored in thingspeak_data.db.
+ - CSV Files: Individual channel data is saved in the project root.
+ - Plots: Visualizations are saved in the plots/ directory.
+
 ---
 
-Step 2: Run the Main Script
+## Modules
 
-Execute the main.py script:
-
-python main.py
-
-Step 3: View Results
-
-Database: The data is stored in thingspeak_data.db.
-
-CSV Files: Individual channel data is saved in the project root.
-
-Plots: Visualizations are saved in the plots/ directory.
-
-Modules
-
-1. main.py
+ ### 1. main.py
 
 Coordinates the workflow:
 
-Fetches data using dbHandler.py.
+ - Fetches data using dbHandler.py.
+ - Visualizes the data using plotting.py.
 
-Visualizes the data using plotting.py.
-
-2. dbHandler.py
+### 2. dbHandler.py
 
 Handles:
-
-Database creation and dynamic table generation.
-
-Data fetching, cleaning, and storage.
-
-Exporting database tables to CSV files.
-
-3. plotting.py
-
+ - Database creation and dynamic table generation.
+ - Data fetching, cleaning, and storage.
+ - Exporting database tables to CSV files.
+ - 
+### 3. plotting.py
 Manages:
+ - 4x4 grid visualization of all channels.
+ - Individual plots for each field.
 
-4x4 grid visualization of all channels.
+### 4. config.py
+ - Reads and writes channel configurations.
+ - Ensures secure handling of API keys.
 
-Individual plots for each field.
+---
+## Example Output
 
-4. config.py
-
-Reads and writes channel configurations.
-
-Ensures secure handling of API keys.
-
-Example Output
-
-4x4 Grid Plot:
+### 4x4 Grid Plot:
 
 Visualizes all fields from both channels in a single grid.
 
-Individual Plots:
+ #### Individual Plots:
 
 Each field’s data is plotted and saved as a separate PNG file in the plots/ folder.
+---
+## License 
+Licensed under GNU
 
-Future Enhancements
+---
+## Author
 
-Dynamic Grid Sizing: Adjust grid layout dynamically based on the number of channels and fields.
-
-Error Logging: Add detailed logs for debugging failed API requests.
-
-Real-Time Updates: Implement a live visualization feature.
-
-License
-
-This project is licensed under the MIT License.
-
-Author
-
-HarryGitHub
+Harry C; @[GitHub](https://github.com/cheuh008/)
