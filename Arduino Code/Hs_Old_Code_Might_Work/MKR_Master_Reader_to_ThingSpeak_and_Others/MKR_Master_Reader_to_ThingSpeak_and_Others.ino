@@ -8,11 +8,7 @@
 #include <Arduino_BHY2Host.h>  //
 
 
-SensorXYZ accel(SENSOR_ID_ACC);
-SensorXYZ gyro(SENSOR_ID_GYRO);
-Sensor temp(SENSOR_ID_TEMP);
-Sensor gas(SENSOR_ID_GAS);
-SensorQuaternion rotation(SENSOR_ID_RV);
+
 
 WiFiClient client;  // Client to establish Wi-Fi connections
 RTCZero rtc;        // Real-time clock instance for managing date and time
@@ -39,11 +35,11 @@ void setup() {
 void loop() {
   if (WiFi.status() != WL_CONNECTED) wifiConnect();
 
-  static unsigned long lastCheck  = millis();
+  static unsigned long lastCheck = millis();
   BHY2Host.update();
 
-  if (millis() - lastCheck  >= 2000) {
-    lastCheck  = millis();
+  if (millis() - lastCheck >= 2000) {
+    lastCheck = millis();
     Serial.println(String("acceleration: ") + accel.toString());
     Serial.println(String("gyroscope: ") + gyro.toString());
 
@@ -60,7 +56,8 @@ void loop() {
         Serial.print(" ");
       }
       Serial.println();
-    } else {
+    }
+    else {
       Serial.println("Error: Received less than expected bytes!");
       while (Wire.available()) Wire.read();                     // Clear buffer
     }                                                           // Newline after printing all data
@@ -70,7 +67,8 @@ void loop() {
     int x = ThingSpeak.writeFields(ChannelIDs[2], APIKeys[2]);  // Write the fields to ThingSpeak
     if (x == 200) {                                             // If the update is successful
       Serial.println("Channel update successful.");             // Print success message
-    } else {                                                    // If there was an error with the HTTP request
+    }
+    else {                                                    // If there was an error with the HTTP request
       Serial.println(" HTTP error code " + String(x));          // Print HTTP error code to help debug
     }
   }
@@ -100,7 +98,8 @@ void getTime() {
   if (numberOfTries == maxTries) {                       // If the maximum retries are reached
     Serial.print("NTP unreachable!!");                   // Print error message
     wifiConnect();                                       //
-  } else {
+  }
+  else {
     Serial.print("Epoch received: ");  // Print the fetched epoch time
     Serial.println(epoch);             // Print the actual epoch value
     rtc.setEpoch(epoch);               // Set the RTC with the fetched epoch time
