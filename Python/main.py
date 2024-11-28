@@ -1,25 +1,40 @@
 # ===========================================================================================================
 # File: main.py
-# Description: Main programme: calls functions to fetch, store, and visualizing data from ThingSpeak Server.
+# Description: Main programme: calls functions to fetch, store, and visualize data from ThingSpeak Server.
 # Author: Harry @https://github.com/cheuh008
 # Created: 2024-11-20
 # ===========================================================================================================
 
+# ===========================================================================================================
+# region: Imports submodules functions for database handling, plotting, and configuration.
+# ===========================================================================================================
 
-from database_handler import setup_database, fetch_and_store_data, fetch_data_from_db
-from plotting import plot_4x4_grid
-from config import get_channels
+from dbHandler import dbHandler         # Handles database setup, data fetching, and storage
+from plotting import plot      # Handles plotting data in a 4x4 grid format
+from config import get_channels         # Loads channel configuration from config.json
 
-CHANNELS = get_channels()
+# ===========================================================================================================
+# region: Constants
+# Description: Define constant variables for database and channel configurations.
+# ===========================================================================================================
 
-DB_NAME = "thingspeak_data.db"                          # Name of the database file
+CHANNELS = get_channels()               # Fetch the channel configurations
+DB_NAME = "thingspeak_data.db"          # Name of the SQLite database file
+
+# ===========================================================================================================
+# region: Main Execution Block
+# Description: Orchestrates the entire process of fetching, storing, and visualizing data.
+# ===========================================================================================================
 
 if __name__ == "__main__":
-    setup_database(DB_NAME, CHANNELS)                   # Step 1: Setup the database
-    fetch_and_store_data(DB_NAME, CHANNELS)             # Step 2: Fetch data from ThingSpeak and store in the database
-    dataframes = fetch_data_from_db(DB_NAME, CHANNELS)  # Step 3: Fetch data from the database for visualization
-    plot_4x4_grid(dataframes, CHANNELS)                 # Step 4: Plot the data
+    dfs = dbHandler(DB_NAME, CHANNELS)  # Fetch and store data from ThingSpeak, return DataFrames
 
-    for channel_name, df in dataframes.items():         # 
-        print(f"Data for {channel_name}:")
-        print(df.head())
+    plot(dfs, CHANNELS)        # Visualize data using a 4x4 grid plot
+
+    for channel, df in dfs.items():     # Iterate over each channel and its DataFrame
+        print(f"Data for {channel}:")   # Print channel name for reference
+        print(df.head())                # Print the first few rows of the DataFrame for inspection
+
+# ==============================================================================================================================
+# End of main.py
+# ==============================================================================================================================
