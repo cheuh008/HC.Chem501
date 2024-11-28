@@ -1,3 +1,6 @@
 secrets.h
 libraries
 .vscode
+keys.json
+config.json
+venv
