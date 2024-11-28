@@ -200,9 +200,8 @@ Each field’s data is plotted and saved as a separate png file in the plots/ fo
 
 ---
 ### 4x4 Grid Plot:
-
 Visualizes all fields from both channels in a single grid.
- ![All Plots Grid](plots/all_plots_grid.png") 
+![All Plots Grid](plots/all_plots_grid.png) 
 ---
 
 ## License 
