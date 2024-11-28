@@ -1,7 +1,7 @@
 
 # Python Data Visualization Tool for ThingSpeak Channels
 
-This Python project fetches, cleans, and visualizes data from ThingSpeak channels, saving data in SQLite databases and CSV files. It generates individual and grid-based visualizations of channel data.
+ - This Python project fetches, cleans, and visualizes data from ThingSpeak channels, saving data in SQLite databases and CSV files. It generates individual and grid-based visualizations of channel data.
 
 <div style="float: left; width: 25%; padding-right: 10px; box-sizing: border-box;">
   <h2>Table of Contents</h2>
