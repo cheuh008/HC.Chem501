@@ -3,6 +3,36 @@
 
 This Python project fetches, cleans, and visualizes data from ThingSpeak channels, saving data in SQLite databases and CSV files. It generates individual and grid-based visualizations of channel data.
 
+<div style="float: left; width: 25%; padding-right: 10px; box-sizing: border-box;">
+  <h2>Table of Contents</h2>
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#file-structure">File Structure</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#step-1-configure-channels">Step 1: Configure Channels</a></li>
+        <li><a href="#step-2-run-the-main-script">Step 2: Run the Main Script</a></li>
+        <li><a href="#step-3-view-results">Step 3: View Results</a></li>
+      </ul>
+    </li>
+    <li><a href="#modules">Modules</a>
+      <ul>
+        <li><a href="#1-mainpy">main.py</a></li>
+        <li><a href="#2-dbhandlerpy">dbHandler.py</a></li>
+        <li><a href="#3-plottingpy">plotting.py</a></li>
+        <li><a href="#4-configpy">config.py</a></li>
+      </ul>
+    </li>
+    <li><a href="#example-output">Example Output</a></li>
+    <li><a href="#future-enhancements">Future Enhancements</a></li>
+    <li><a href="#issues-and-troubleshooting">Issues and Troubleshooting</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#author">Author</a></li>
+  </ul>
+</div>
+
 ## Overview
 
 This Python project is designed to fetch, clean, and visualize data from ThingSpeak channels. It dynamically handles multiple channels, processes their data, and saves it in both database (.db) and CSV formats. Finally, it generates visualizations in a 4x4 grid layout and individual plots, saving them as images.
@@ -161,40 +191,5 @@ Harry C; @[GitHub](https://github.com/cheuh008/)
 
 ---
 
-<!-- Sidebar with Table of Contents -->
-<div style="float: left; width: 25%; padding-right: 10px; box-sizing: border-box;">
-  <h2>Table of Contents</h2>
-  <ul>
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#file-structure">File Structure</a></li>
-    <li><a href="#prerequisites">Prerequisites</a></li>
-    <li><a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#step-1-configure-channels">Step 1: Configure Channels</a></li>
-        <li><a href="#step-2-run-the-main-script">Step 2: Run the Main Script</a></li>
-        <li><a href="#step-3-view-results">Step 3: View Results</a></li>
-      </ul>
-    </li>
-    <li><a href="#modules">Modules</a>
-      <ul>
-        <li><a href="#1-mainpy">main.py</a></li>
-        <li><a href="#2-dbhandlerpy">dbHandler.py</a></li>
-        <li><a href="#3-plottingpy">plotting.py</a></li>
-        <li><a href="#4-configpy">config.py</a></li>
-      </ul>
-    </li>
-    <li><a href="#example-output">Example Output</a></li>
-    <li><a href="#future-enhancements">Future Enhancements</a></li>
-    <li><a href="#issues-and-troubleshooting">Issues and Troubleshooting</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#author">Author</a></li>
-  </ul>
-</div>
 
-<!-- Main Content -->
-<div style="float: right; width: 70%; box-sizing: border-box;">
-  <h1 id="overview">Overview</h1>
-  <p>Your content goes here...</p>
-</div>
 
