@@ -47,7 +47,7 @@
 
 2. **Visualization**:
    - Generates 4x4 grid plots for combined data.
-   - Creates individual field plots saved as PNGs.
+   - Creates individual field plots saved as png"s.
 
 3. **Configuration Management**:
    - Uses `config.json` for channel labels and fields.
@@ -61,7 +61,7 @@
 
 1. The `main.py` script calls `dbHandler.py` to fetch data from ThingSpeak channels using their API keys.
 2. The data is cleaned and stored in a SQLite database (`thingspeak_data.db`).
-3. Plots are generated using `plotting.py`, which creates a 4x4 grid and individual PNG files for each field.
+3. Plots are generated using `plotting.py`, which creates a 4x4 grid and individual png" files for each field.
 4. Results are saved in the `plots/` directory and displayed in the terminal.
 
 ---
@@ -174,31 +174,35 @@ Manages:
 
  #### Individual Plots:
  
-Each field’s data is plotted and saved as a separate PNG file in the plots/ folder.
+Each field’s data is plotted and saved as a separate png file in the plots/ folder.
+<table>
+  <tr>
+    <td><img src="plots/Gas_Resistance_(Ohms)_plot.png" alt="Gas Resistance"></td>
+    <td><img src="plots/Pressure_(Pa)_plot.png" alt="Pressure"></td>
+    <td><img src="plots/Stationary_IAQ_plot.png" alt="Stationary IAQ"></td>
+  </tr>
+  <tr>
+    <td><img src="plots/Breath_VOC_Equivalent_(ppm)_plot.png" alt="Breath VOC"></td>
+    <td><img src="plots/CO2_Equivalent_(ppm)_plot.png" alt="CO2 Equivalent"></td>
+    <td><img src="plots/Compensated_Temperature_(°C)_plot.png" alt="Compensated Temperature"></td>
+  </tr>
+  <tr>
+    <td><img src="plots/Compensated_Humidity_(Relative_%25)_plot.png" alt="Compensated Humidity"></td>
+    <td><img src="plots/BSEC_Accuracy_(%253)_plot.png" alt="BSEC Accuracy"></td>
+    <td><img src="plots/Ambient_plot.png" alt="Ambient"></td>
+  </tr>
+  <tr>
+    <td><img src="plots/Acetone_plot.png" alt="Acetone"></td>
+    <td><img src="plots/Ethanol_plot.png" alt="Ethanol"></td>
+    <td><img src="plots/Ethyl_Acetate_plot.png" alt="Ethyl Acetate"></td>
+  </tr>
+</table>
 
-| ![Accuracy](plots/Accuracy_plot.png) | ![Acetone](plots/Acetone_plot.png) | ![Ambient](plots/Ambient_plot.png) | ![BSEC Accuracy](plots/BSEC_Accuracy_(%3)_plot.png) |
-|--------------------------------------|------------------------------------|------------------------------------|----------------------------------------------------|
-| Accuracy                             | Acetone                            | Ambient                            | BSEC Accuracy                                      |
-
-| ![Breath VOC](plots/Breath_VOC_Equivalent_(ppm)_plot.png) | ![CO2 Equivalent](plots/CO2_Equivalent_(ppm)_plot.png) | ![Compensated Humidity](plots/Compensated_Humidity_(Relative_%)_plot.png) | ![Compensated Temperature](plots/Compensated_Temperature_(°C)_plot.png) |
-|----------------------------------------------------------|------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| Breath VOC                                               | CO2 Equivalent                                       | Compensated Humidity                                                   | Compensated Temperature                                                     |
-
-| ![Ethanol](plots/Ethanol_plot.png) | ![Ethyl Acetate](plots/Ethyl_Acetate_plot.png) | ![Gas Resistance](plots/Gas_Resistance_(Ohms)_plot.png) | ![Pressure](plots/Pressure_(Pa)_plot.png) |
-|-----------------------------------|-----------------------------------------------|---------------------------------------------------------|-------------------------------------------|
-| Ethanol                           | Ethyl Acetate                                 | Gas Resistance                                          | Pressure                                  |
-
-| ![Stationary IAQ](plots/Stationary_IAQ_plot.png) ||               |               |
-|-------------------------------------------------|---------------------------------------------|---------------|---------------|
-| Stationary IAQ                                  | All Plots Grid                              |               |               |
-
-
-</html>
 ---
 ### 4x4 Grid Plot:
 
 Visualizes all fields from both channels in a single grid.
- ![All Plots Grid](plots/all_plots_grid.png) 
+ ![All Plots Grid](plots/all_plots_grid.png") 
 ---
 
 ## License 
