@@ -121,7 +121,7 @@ void requestEvent() {
       String(bsec2Collector.gas()),
       String(bsec2Collector.gas_index())
     };
-    Wire.write(dataToSend, sizeof(dataToSend));
+    Wire.write(dataToSend);
     break;
   }
   }
