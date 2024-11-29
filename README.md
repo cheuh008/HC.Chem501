@@ -2,6 +2,11 @@
 
 This repository integrates Python scripts, Arduino code, and BME (Bosch Measurement Engineering) configurations to create a cohesive project ecosystem for environmental data collection, processing, and analysis. Below is an overview of the components, their interconnections, and usage.
 
+#Simple idea
+
+# 
+
+
 ## File Tree Structure
 ``` bash
 H.C.Chem501
