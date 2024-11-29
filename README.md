@@ -1,57 +1,102 @@
-# BSEC Sensor Data Logging to ThingSpeak
+# Project Overview: Python, BME, and Arduino Code
 
-University of Liverpool MSC Digital Chemistry Project
+This repository integrates Python scripts, Arduino code, and BME (Bosch Measurement Engineering) configurations to create a cohesive project ecosystem for environmental data collection, processing, and analysis. Below is an overview of the components, their interconnections, and usage.
 
-- Harry
+## File Tree Structure
+``` bash
+H.C.Chem501
+├── Arduino Code
+│   ├── Consolidated
+│   │   ├── Smoke_MKR
+│   │   │   └── ...
+│   │   └── Smoke_Nicla
+│   │       └── ...
+│   └── Modules
+│       ├── BackUpVOC_MKR
+│       ├── BackUpVOC_NiclaAppLowDelay
+│       ├── MKR_Master_to_ThingSpeak
+│       ├── Nicla_BSEC2_Classifier_Slave_Sender
+│       └── Nicla_Gas_Collector
+├── BME_AI_Data
+│   ├── BSEC2DataLogConverter.py
+│   ├── DataLogs
+│   │   ├── 1.1Ambient_Everton_30min.log
+│   │   ├── ...
+│   │   └── 4.3.2Ethanol-60ml.log
+│   ├── Nicla_BME2.bmeproject
+│   │   ├── algorithms
+│   │   └── ...
+│   ├── Nicla_BME2V2.bmeproject
+│   │   ├── algorithms
+│   │   └── ...
+│   ├── NiclaBME_HP-354.bmeconfig
+│   └── Specimen
+│       ├── acetic_acid_4_3.bmespecimen
+│       ├──...
+│       ├── acetone_2_1.bmespecimen
+│       ├──...
+│       ├── acetone_4_9.bmespecimen
+│       ├──...
+│       ├── ambient_4.bmespecimen
+│       ├── ethanol_4_1_5.bmespecimen
+│       ├──...
+│       └── ethyl_acetate_2.bmespecimen
+├── Python
+│   ├── channel_1_data.csv
+│   ├── channel_2_data.csv
+│   ├── config.py
+│   ├── dbHandler.py
+│   ├── keys.json
+│   ├── main.py
+│   ├── plots
+│   │   └── ... .png
+│   ├── plotting.py
+│   ├── requirements.txt
+│   └── thingspeak_data.db
+└── README.md
+```
 
-## Project Overview
+## Components
 
-This project involves collecting environmental sensor data from the Bosch Sensortec Environmental Cluster (BSEC) BME688 using an Arduino MKR WiFi 1010 board. The data is logged to ThingSpeak, an IoT analytics platform, every 30 seconds. Additionally, the project leverages the internal RTC (Real-Time Clock) on the MKR WiFi 1010 to timestamp the data.
+### 1. **Python Scripts**
+- **`BSEC2DataLogConverter.py`:** A Python script to convert raw data logs from the BME sensors into an analyzable format.
+- **`data_analysis.ipynb`:** A Jupyter Notebook for analysing and visualising environmental data, with examples for plotting and statistical analysis.
 
-## Hardware Requirements
+### 2. **BME Configurations**
+- **`NiclaBME_HP-354.bmeconfig`:** High-performance configuration tailored for specific environmental monitoring tasks.
+- **`Nicla_BME2.bmeproject`:** The base project configuration for Nicla BME2 boards.
+- **`Nicla_BME2V2.bmeproject`:** An optimised version of the base configuration for enhanced accuracy.
 
-- Arduino MKR WiFi 1010
-- Arduino Nicla Sense Me
-- Internet connection
+### 3. **Arduino Code**
+#### Consolidated Approach:
+- **Smoke_MKR:** A single project focused on data collection and transmission for the MKR board.
+- **Smoke_Nicla:** Configurations and code for the Nicla board, including specific headers like `BSEC2CONFIG.h`.
 
-## Software Requirements
+#### Modular Approach:
+- **MKR_Master_to_ThingSpeak:** Sends processed data to the ThingSpeak platform.
+- **Nicla_BSEC2_Classifier_Slave_Sender:** Focuses on transmitting classifier data from the Nicla board.
 
-- Arduino IDE
-- Libraries:
-  - `Arduino_BHY2`
-  - `Arduino_BHY2Host`
-  - `ThingSpeak`
-  - `WiFiNINA`
-  - `RTCZero`
+## Workflow
+1. **Data Collection:**
+   - Use Arduino code to collect data from BME sensors on the MKR or Nicla boards.
+   - Store logs in the `ataLogs` folder or equivalent.
 
+2. **Data Conversion:**
+   - Run `BSEC2DataLogConverter.py` to process raw logs into a structured format.
 
-## Setup Instructions
+3. **Analysis:**
+   - Use `data_analysis.ipynb` to perform detailed analyses and visualisation.
 
-1. **Connect the Hardware:**
+4. **Configuration Management:**
+   - Modify `.bmeconfig` or `.bmeproject` files to fine-tune sensor performance for specific use cases.
 
-   - Connect the Nicla Sense Me to the MKR WiFi 1010 board Via Eslov (or I2C should work too)
-     
-2. **Install Required Libraries:**
+## Contribution Guidelines
+- Keep the Python, BME, and Arduino sections organised.
+- Document changes to configurations and scripts in their respective `README.md` files.
+- Test all changes before committing to ensure compatibility across components.
 
-   - Open the Arduino IDE.
-   - Go to **Sketch** > **Include Library** > **Manage Libraries**.
-   - Search for and install the following libraries:
-      - `Arduino_BHY2`
-      - `Arduino_BHY2Host`
-      - `ThingSpeak`
-      - `WiFiNINA`
-      - `RTCZero`
+## Notes
+- Ensure proper synchronisation between hardware configurations and scripts for optimal performance.
+- Refer to individual README files within each folder for more specific usage instructions.
 
-3. **Configure ThingSpeak:**
-
-   - Create an account on [ThingSpeak](https://www.thingspeak.com).
-   - Create deseried no. of channels (up to 4) and note down the Channel IDs and Write API Keys.
-
-4. **Setup WiFi Credentials:**
-   - Create a `secrets.h` file with your network SSID and password, ThingSpeak Channel ID, and Write API Key.
-   ```cpp
-   #define SECRET_SSID "your_SSID"
-   #define SECRET_PASS "your_PASSWORD"
-   #define SECRET_CH_ID your_ChannelID
-   #define SECRET_W_APIKEY "your_APIKey"
-   ```
+For further assistance, contact the repository maintainers or refer to the official documentation of the respective tools.
