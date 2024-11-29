@@ -17,6 +17,7 @@ By PiggyBacking the ML model onboard the Nicla, a custom algorithm can be made a
 
 ## Table of Contents
 - [Background](#background)
+- [File Tree Structure](#fil-tree-structure)
 - [Project Setup, Installation, and Use](#project-setup-installation-and-use)
   - [Hardware Requirements](#hardware-requirements)
   - [Software Setup](#software-setup)
@@ -34,115 +35,10 @@ The Nicla project, code-named **Smoking the Nicla**, integrates Arduino-based ha
 
 ---
 
-# Project Setup, installation and Use (Recommended)
-The following layout describes how the recommended environment was set up, but you can modify it as needed. Refer to documentation and libraries for additional support.
-
-### **Hardware Requirements**
-
-- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me) *(Includes ESLOV cable)*
-- [Arduino MKR WiFi 1010](https://store.arduino.cc/products/arduino-mkr-wifi-1010)
-- **Power and Data Micro USB Cable**
-- *(Optional)* **Portable Power Supply**
-- *(Recommended)* **Portable Wi-Fi Source**
-
-### Software Setup
-
-Clone this repository into your working directory:
-```bash
-git clone https://github.com/cheuh008/HC.Chem501
-```
-
-#### Arduino Environment
-1. **Install Arduino IDE**:  
-   Download the latest Arduino IDE from [here](https://www.arduino.cc/en/software).  
-   Also, you can use VS Code with the Arduino extension.
-
-2. **Required Boards and Libraries**:  
-   Install the following via the **Board Manager** and **Library Manager**:
-   - **Boards**:
-     - Nicla (Mbed OS Nicla Boards)
-     - MKR SAMD Boards
-   - **Libraries**:
-     - `Arduino_BHY2`
-     - `Arduino_BLE`
-     - `Arduino_BHY2Host`
-     - `RTCZero`
-     - `WiFiNINA`
-     - `ThingSpeak`
-
-3. **Configure `secrets.h`**:  
-   Create a `secrets.h` file in your Arduino project. Copy the template from `secrets_template.h` and fill in your Wi-Fi credentials and ThingSpeak API keys:
-   ```cpp
-   #define SECRET_SSID "YourWiFiSSID"
-   #define SECRET_PASS "YourWiFiPassword"
-   #define SECRET_API_KEY "YourThingSpeakAPIKey"
-   ```
-
-4. **Upload Code**:  
-   - Run `Smoke_Nicla.ino` in **Mode = 2** or `Nicla_Gas_Collector.ino` to collect gas data.
-   - To collate gas data from serial, please take a look at the **BME AI Studio (& PuTTY)** section below.
-
-#### BME AI Studio (& PuTTY)
-1. **Download Tools**:
-   - [BME AI Studio](https://www.bosch-sensortec.com/software-tools/software/bme688-software/)
-   - [PuTTY](https://www.putty.org/)
-
-2. **Set Up AI Studio**:
-   - Create a new project in BME AI Studio.
-   - Create and save a heating profile (e.g., `HP-354`).
-
-3. **Organise Logs**:  
-   - Move log files into a dedicated directory for easier management.
-   - Copy `BSEC2DataLogConverter.py` from the `tools` folder in the BHY2 library to your log directory.
-
-4. **Run Data Conversion**:
-   Use the Python script to process logs into raw data files for AI Studio:
-   ```bash
-   python BSEC2DataLogConverter.py ./datalogs/3.1.1Ambient30mins.log 0 ./NiclaBME_HP-354.bmeconfig
-   python BSEC2DataLogConverter.py ./datalogs/4.3.2Ethanol-60ml.log 1 ./NiclaBME_HP-354.bmeconfig
-   ```
-
-5. **Import Data**:
-   - Import the generated `.bmerawdata` files separately for class classification
-   - Generate a new algorithm with the imported data. 
-
-#### Python Environment
-Python is used for data analysis and visualisation. The following steps assume you are using Python 3.12 with a virtual environment:
-
-1. **Install Dependencies**:
-   ```bash
-   cd Python
-   pip install -r requirements.txt
-   ```
-
-2. **Add API Keys**:  
-   Create a `keys.json` file in the `Python` directory and ensure it is listed in `.gitignore`:
-   ```json
-   {
-       "api_keys": {
-           "channel_1": "YourChannel1APIKey",
-           "channel_2": "YourChannel2APIKey"
-       }
-   }
-   ```
-
-3. **Configure ThingSpeak Channels**:
-   - Edit `config.py` to customise channel details as needed.
-
----
-
-### Further Reading
-- [BME688 Sensor Overview](https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme688/)
-- [BME688 Datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf)
-- [Bosch AI Studio](https://www.bosch-sensortec.com/media/boschsensortec/downloads/application_notes_1/bst-bme688-an001.pdf)
-- [How gas sensing gets intelligent with BME688](https://www.youtube.com/watch?v=dO7DRoLsDNM)
-- [BSEC2 Gas Scanner Classify Example](https://github.com/arduino-libraries/Arduino_BHY2/blob/main/examples/BSEC2GasScannerClassify/BSEC2GasScannerClassify.ino)
-- [BSEC2 Gas Scanner Collect Data Example](https://github.com/arduino-libraries/Arduino_BHY2/blob/main/examples/BSEC2GasScannerCollectData/BSEC2GasScannerCollectData.ino)
-- [Hackster Project: BME AI Studio with Nicla Sense ME](https://www.hackster.io/lucasguocn/use-bme-ai-studio-with-bme688-on-the-nicla-sense-me-board-5f1b55)
-- [Bosch Forum Discussion](https://community.bosch-sensortec.com/mems-sensors-forum-jrmujtaw/post/bme-ai-studio-config-on-arduino-nicla-TPCJdSxmesNaGIM)
-
-
 ## File Tree Structure
+- "Most" folders have a ReadMe.md for extended documentation as needed
+- Data logs have been included in the repo for reproducibility
+- 
 ``` bash
 H.C.Chem501
 ├── Arduino Code
@@ -195,48 +91,126 @@ H.C.Chem501
 │   └── thingspeak_data.db
 └── README.md
 ```
+---
 
-## Components
+# Project Setup, installation and Use (Recommended)
+The following layout describes how the recommended environment was set up, but you can modify it as needed. Refer to documentation and libraries for additional support.
 
-### 1. **Python Scripts**
-- **`BSEC2DataLogConverter.py`:** A Python script to convert raw data logs from the BME sensors into an analyzable format.
-- **`data_analysis.ipynb`:** A Jupyter Notebook for analysing and visualising environmental data, with examples for plotting and statistical analysis examples.
+### **Hardware Requirements**
 
-### 2. **BME Configurations**
-- **`NiclaBME_HP-354.bmeconfig`:** High-performance configuration specific environmental monitoring tasks.
-- **`Nicla_BME2.bmeproject`:** The base project configuration for Nicla BME2 boards.
-- **`Nicla_BME2V2.bmeproject`:** An optimised version of the base configuration for enhanced accuracy.
+- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me) *(Includes ESLOV cable)*
+- [Arduino MKR WiFi 1010](https://store.arduino.cc/products/arduino-mkr-wifi-1010)
+- **Power and Data Micro USB Cable**
+- *(Optional)* **Portable Power Supply**
+- *(Recommended)* **Portable Wi-Fi Source**
 
-### 3. **Arduino Code**
-#### Consolidated Approach:
-- **Smoke_MKR:** A single project focused on data collection and transmission for the MKR board.
-- **Smoke_Nicla:** Configurations and code for the Nicla board, including specific headers like `BSEC2CONFIG.h`.
+### Software Setup
 
-#### Modular Approach:
-analyzablester_to_ThingSpeak:** Sends processed data to the ThingSpeak analyzing
-- **visualizing_Classifier_Slave_Sender:** Focuses on transmitting classifier data from the Nicla board.
+Clone this repository into your working directory:
+```bash
+git clone https://github.com/cheuh008/HC.Chem501
+```
 
-## Workflow
-1. **Data Collection:**
-   - Use Arduino code to collect data from BME sensors on the MKR or Nicla boards.
-   - Store logs in the `catalogues` folder or equivalent.
+#### Arduino Environment
+1. **Install Arduino IDE**:  
+   Download the latest Arduino IDE from [here](https://www.arduino.cc/en/software).  
+   Also, you can use VS Code with the Arduino extension.
 
-2. **Data Conversion:**
-   - Run `BSEC2DataLogConverter.py` to process raw logs into aoptimizeded format.
+2. **Required Boards and Libraries**:  
+   Install the following via the **Board Manager** and **Library Manager**:
+   - **Boards**:
+     - Nicla (Mbed OS Nicla Boards)
+     - MKR SAMD Boards
+   - **Libraries**:
+     - `Arduino_BHY2`
+     - `Arduino_BLE`
+     - `Arduino_BHY2Host`
+     - `RTCZero`
+     - `WiFiNINA`
+     - `ThingSpeak`
 
-3. **Analysis:**
-   - Use `PYTHON` to perform detailed analyses and visualisation.
+3. **Configure `secrets.h`**:  
+   Create a `secrets.h` file in your Arduino project. Copy the template from `secrets_template.h` and fill in your Wi-Fi credentials and ThingSpeak API keys:
+   ```cpp
+   #define SECRET_SSID "YourWiFiSSID"
+   #define SECRET_PASS "YourWiFiPassword"
+   #define SECRET_API_KEY "YourThingSpeakAPIKey"
+   ```
 
-4. **Configuration Management:**
-   - Modify `.bmeconfig` or `.bmeproject` files to fine-tune sensor performance for specific use cases.
+4. **Upload Code**:  
+   - Run `Smoke_Nicla.ino` in **Mode = 2** or `Nicla_Gas_Collector.ino` to collect gas data.
+   - To collate gas data from serial, refer to the **BME AI Studio (& PuTTY)** section below.
 
-## Contribution Guidelines
-- Keep the Python, BME, and Arduino sections organised.
-- Document changes to configurations and scripts in their respective `README.md` files.
-- Test all changes before committing to ensure compatibility across components.
+#### BME AI Studio (& PuTTY)
+1. **Download Tools**:
+   - [BME AI Studio](https://www.bosch-sensortec.com/software-tools/software/bme688-software/)
+   - [PuTTY](https://www.putty.org/)
 
-## Notes
-- Ensure proper synchronisation between hardware configurations and scripts for optimal performance.
-- Refer to individual README files within each folder for specific usage instructions.
+2. **Set Up AI Studio**:
+   - Create a new project in BME AI Studio.
+   - Create and save a heating profile (e.g., `HP-354`).
 
-For further assistance, contact the repository maintainers or refer to the official documentation of the respective tools.
+3. **Organise Logs**:  
+   - Move log files into a dedicated directory for easier management.
+   - Copy `BSEC2DataLogConverter.py` from the `tools` folder in the BHY2 library to your log directory.
+
+4. **Run Data Conversion**:
+   Use the Python script to process logs into raw data files for AI Studio:
+   ```bash
+   python BSEC2DataLogConverter.py ./datalogs/3.1.1Ambient30mins.log 0 ./NiclaBME_HP-354.bmeconfig
+   python BSEC2DataLogConverter.py ./datalogs/4.3.2Ethanol-60ml.log 1 ./NiclaBME_HP-354.bmeconfig
+   ```
+
+5. **Import Data**:
+   - Import the generated `_gas_x_{name}.bmerawdata` files separately for class classification
+   - Create and train a new algorithm with the imported data.
+   - Select the `Algorithm Settings` of your choice, ie: `Gas Data Channel, Apply Clipping Prevention`
+   - Export as `BSEC Config File`
+
+   
+6 **Gas Classification**:
+   - from the exported `BSEC Config File`, find the `.c` file: `dateTime_name_HP-354_RCS-1-0Continous.c`
+   - take note of the number on bits inside the square brackets `[...]` as sometimes is needed if data is all 0s
+   - replace the existing demo array in const uint8_5 BSECCONFIG[] = {...}; within the BHY2>example>BSEC2GasClassifier, or the `BSECCONFIG.h` file inside Nicla_Smoke
+   - Upload the new code to the Nicla and test its efficacy on gas C
+
+
+#### Python Environment
+Python is used for data analysis and visualisation. The following steps assume you are using Python 3.12 with a virtual environment:
+
+1. **Install Dependencies**:
+   ```bash
+   cd Python
+   pip install -r requirements.txt
+   ```
+
+2. **Add API Keys**:  
+   Create a `keys.json` file in the `Python` directory and ensure it is listed in `.gitignore`:
+   ```json
+   {
+       "api_keys": {
+           "channel_1": "YourChannel1APIKey",
+           "channel_2": "YourChannel2APIKey"
+       }
+   }
+   ```
+
+3. **Configure ThingSpeak Channels**:
+   - Edit `config.py` to customise channel details as needed.
+
+---
+
+### Further Reading
+- [BME688 Sensor Overview](https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme688/)
+- [BME688 Datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf)
+- [Bosch AI Studio](https://www.bosch-sensortec.com/media/boschsensortec/downloads/application_notes_1/bst-bme688-an001.pdf)
+- [How gas sensing gets intelligent with BME688](https://www.youtube.com/watch?v=dO7DRoLsDNM)
+- [BSEC2 Gas Scanner Classify Example](https://github.com/arduino-libraries/Arduino_BHY2/blob/main/examples/BSEC2GasScannerClassify/BSEC2GasScannerClassify.ino)
+- [BSEC2 Gas Scanner Collect Data Example](https://github.com/arduino-libraries/Arduino_BHY2/blob/main/examples/BSEC2GasScannerCollectData/BSEC2GasScannerCollectData.ino)
+- [Hackster Project: BME AI Studio with Nicla Sense ME](https://www.hackster.io/lucasguocn/use-bme-ai-studio-with-bme688-on-the-nicla-sense-me-board-5f1b55)
+- [Bosch Forum Discussion](https://community.bosch-sensortec.com/mems-sensors-forum-jrmujtaw/post/bme-ai-studio-config-on-arduino-nicla-TPCJdSxmesNaGIM)
+
+
+
+
+
