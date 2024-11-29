@@ -39,19 +39,11 @@ The following layout describes how the recommended environment was set up, but y
 
 ### **Hardware Requirements**
 
-- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me)  
-  *(ESLOV requiredcluded with the board)*
-
+- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me) *(ESLOV requiredcluded with the board)*
 - [Arduino MKR WiFi 101libraries/are.arduinomanagerducts/arduino-mkr-wifi-1010)
-
 - **Power and Data Micro USB Cable**
-- 
 - *(Optional)* **Portable Power Supply**
-- 
 - *(Recommended)* **Portable Wi-Fi Source**
-
-
----
 
 ### Software Setup
 
@@ -90,8 +82,6 @@ git clone https://github.com/cheuh008/HC.Chem501
    - Run `Smoke_Nicla.ino` in **Mode = 2** or `Nicla_Gas_Collector.ino` to collect gas data.
    - To collate gas data from serial, please take a look at the **BME AI Studio (& PuTTY)** section below.
 
----
-
 #### BME AI Studio (& PuTTY)
 1. **Download Tools**:
    - [BME AI Studio](https://www.bosch-sensortec.com/software-tools/software/bme688-software/)
@@ -115,8 +105,6 @@ git clone https://github.com/cheuh008/HC.Chem501
 5. **Import Data**:
    - Import the generated `.bmerawdata` files separately for class classification
    - Generate a new algorithm with the imported data. 
-
----
 
 #### Python Environment
 Python is used for data analysis and visualisation. The following steps assume you are using Python 3.12 with a virtual environment:
