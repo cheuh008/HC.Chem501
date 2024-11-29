@@ -1,7 +1,6 @@
 # Project: Smoking The Nicla
 
-## Brief: 
-Training a ML Algorithm to identify a range of solvents using the BME688 sensor from Bosch onboard the Nicla Sense Me
+#### Brief: Training a ML Algorithm to identify a range of solvents using the BME688 sensor from Bosch onboard the Nicla Sense Me
 
 ## Method: 
 By PiggyBacking the ML model onboard the Nicla, a custom algorithm can be made and used to identify solvents. The result is then collated on a server and processed by Python via an API
