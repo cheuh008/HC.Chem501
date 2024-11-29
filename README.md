@@ -34,13 +34,13 @@ The Nicla project, code-named **Smoking the Nicla**, integrates Arduino-based ha
 
 ---
 
-## Project Setup, installation and Use (Recommended)
+# Project Setup, installation and Use (Recommended)
 The following layout describes how the recommended environment was set up, but you can modify it as needed. Refer to documentation and libraries for additional support.
 
 ### **Hardware Requirements**
 
-- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me) *(ESLOV requiredcluded with the board)*
-- [Arduino MKR WiFi 101libraries/are.arduinomanagerducts/arduino-mkr-wifi-1010)
+- [Nicla Sense ME](https://store.managersc,/products/nicla-sense-me) *(Includes ESLOV cable)*
+- [Arduino MKR WiFi 1010](https://store.arduino.cc/products/arduino-mkr-wifi-1010)
 - **Power and Data Micro USB Cable**
 - *(Optional)* **Portable Power Supply**
 - *(Recommended)* **Portable Wi-Fi Source**
