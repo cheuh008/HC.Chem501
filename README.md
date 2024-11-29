@@ -85,7 +85,7 @@ H.C.Chem501
    - Run `BSEC2DataLogConverter.py` to process raw logs into a structured format.
 
 3. **Analysis:**
-   - Use `data_analysis.ipynb` to perform detailed analyses and visualisation.
+   - Use `PYTHON` to perform detailed analyses and visualisation.
 
 4. **Configuration Management:**
    - Modify `.bmeconfig` or `.bmeproject` files to fine-tune sensor performance for specific use cases.
