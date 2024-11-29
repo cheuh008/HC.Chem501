@@ -139,6 +139,10 @@ git clone https://github.com/cheuh008/HC.Chem501
 4. **Upload Code**:  
    - Run `Smoke_Nicla.ino` in **Mode = 2** or `Nicla_Gas_Collector.ino` to collect gas data.
    - To collate gas data from serial, refer to the **BME AI Studio (& PuTTY)** section below.
+   - and the following youtube video for experimental setup
+  
+   [![How gas sensing gets intelligent with BME688 and BME AI-Studio](https://img.youtube.com/vi/4vdliMRtxBY/0.jpg)](https://www.youtube.com/watch?v=4vdliMRtxBY)
+
 
 #### BME AI Studio (& PuTTY)
 1. **Download Tools**:
