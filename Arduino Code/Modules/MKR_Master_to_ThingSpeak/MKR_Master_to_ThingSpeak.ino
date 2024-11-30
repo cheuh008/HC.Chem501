@@ -19,16 +19,12 @@ void setup() {
 }
 
 void loop() {
-  if (WiFi.status() != WL_CONNECTED) wifiConnect();
-
   static unsigned long lastCheck = millis();
-
+  if (WiFi.status() != WL_CONNECTED) wifiConnect();
   if (millis() - lastCheck >= 2000) {
     lastCheck = millis();
-
     Wire.requestFrom(2, size);        // Request 5 bytes from slave device #2
     Serial.print("Received data: ");  // Print received data
-
     if (Wire.available() == size) {  // Ensure 5 bytes are received
       for (int i = 0; i < size; i++) {
         receivedData[i] = Wire.read();
@@ -42,7 +38,7 @@ void loop() {
       Serial.println("Error: Received less than expected bytes!");
       while (Wire.available()) Wire.read();                     // Clear buffer
     }                                                           // Newline after printing all data
-    String msg = "Values updated at: " + printTime();           // Construct the status message with the current timestamp
+    String msg = "Gas Estimates updated at: " + printTime();           // Construct the status message with the current timestamp
     ThingSpeak.setStatus(msg);                                  // Set the ThingSpeak channel status with the timestamp message
     Serial.println(msg);                                        // Print the status message to the Serial Monitor
     int x = ThingSpeak.writeFields(ChannelIDs[2], APIKeys[2]);  // Write the fields to ThingSpeak
