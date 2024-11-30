@@ -26,7 +26,7 @@ Initial project folder. It contains some useful data, information and algorithms
 ### 3. **Nicla_BME2V2.bmeproject**
 This is an updated version of the initial `Nicla_BME2.bmeproject`. It contains a lot of similar information, some newer updated ones, and better formatting. 
 
-### 4. **Specimen/**
+### 4. **Specimen**
 A folder of preconfigured BME data that can be directly imported into AI studio without individual importing and labelling for ease of use. However, the original datalog is still here as a reference and data validation. 
 
 ### 5. **BSEC2DataLogConverter.py**
