@@ -46,7 +46,7 @@ DEFAULT_CONFIG = {                                                    # Default 
         "id": 2753096,                                                # ThingSpeak Channel ID 1
         "fields": 5,                                                  # Number of fields in the channel 1
         "api_key": API_KEY_1,                                         # API key for accessing the channel 1
-        "labels": ["Ambient", "Acetone", "Ethyl Acetate", "Ethanol", "Accuracy"]
+        "labels": ["Acetone", "Ambient", "Ethyl Acetate", "Ethanol", "Accuracy"]
     },
     "channel_2": {
         "id": 2758654,                                                # ThingSpeak Channel ID 2
