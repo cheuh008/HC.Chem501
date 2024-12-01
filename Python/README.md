@@ -74,8 +74,10 @@ Project Root
 ├── plotting.py             # Handles data visualization and plot generation.
 ├── config.py               # Manages channel configuration and API keys.
 ├── keys.json               # Stores API keys securely (excluded from Git).
-├── config.json             # Stores channel configurations (auto-generated).
+├── config.json             # Stores channel configurations (auto-generated and excluded from Git).
 ├── plots/                  # Folder where all plots are saved.
+├── cleaned_plots/          # Folder where custom plots are saved.
+├── data/                   # Folder data points are manually moved and saved here.
 ├── requirements.txt        # Python dependencies.
 ``` 
 
