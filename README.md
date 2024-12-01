@@ -5,10 +5,10 @@
 ## Method: 
 By PiggyBacking the ML model onboard the Nicla, a custom algorithm can be made and used to identify solvents. The result is then collated on a server and processed by Python via an API
 1. **Data Collection**: Gas data can be collected via an example Arduino code within the BHY2 Library
-2. **Data Logging**:Gas Data is logged and Saved By Putty
+2. **Data Logging**:Gas Data is logged and Saved By PuTTY
 3. **Data Processing**:A pre-written Python script processes data to a format usable by BME_AI_Studio
 4. **ML Training**:Data is used to train a ML Algorithm and exported as a BSEC2 Config Array
-5. **Gas Classification**: the configured array is uploaded back onto Nicla Sense Me to be used to classify different Solvents
+5. **Gas Classification**: the configured array is uploaded back onto Nicla Sense ME to be used to classify different Solvents
 6. **Data Storage**: That data is uploaded to a ThingSpeak channel, which enables remote logging, deployment and Analysis
 7. **Data Analysis**: The Python script then enables the data to be pulled remotely from the ThingSpeak Channel for data analysis and visualisation
 
