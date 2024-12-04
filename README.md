@@ -1,6 +1,16 @@
 # Project: Smoking The Nicla
 
 #### Brief: Training a ML Algorithm to identify a range of solvents using the BME688 sensor from Bosch onboard the Nicla Sense Me
+
+The project/directory can be broken down into 3 main categories with the method further breaking down into step by step but TL:DR; 
+1. Data Acquisition --> Arduino Code
+    - Use Arduino IDE 2 to collect the gas data and PuTTy to log 
+2. ML Training --> BME_AI_Data
+    - Use [BME AI Studio](https://www.bosch-sensortec.com/software-tools/software/bme688-software/)
+to train a custom solvent config. Or use the preconfigured data string in Arduino Code 
+3. Data Processing and visualisation
+   - Use Python to download data from your own thingSpeak Channel, or use cleaned data from `thingspeak_data.db` to create plots using given data
+
 ---
 ## Method: 
 By PiggyBacking the ML model onboard the Nicla, a custom algorithm can be made and used to identify solvents. The result is then collated on a server and processed by Python via an API
