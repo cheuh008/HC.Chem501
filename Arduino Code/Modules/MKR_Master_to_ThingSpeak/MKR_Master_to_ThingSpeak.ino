@@ -19,33 +19,34 @@ void setup() {
 }
 
 void loop() {
+  bool allZeros = true;  // Flag to track if all sensor readings are zero
   static unsigned long lastCheck = millis();
   if (WiFi.status() != WL_CONNECTED) wifiConnect();
   if (millis() - lastCheck >= 2000) {
     lastCheck = millis();
     Wire.requestFrom(2, size);        // Request 5 bytes from slave device #2
     Serial.print("Received data: ");  // Print received data
-    if (Wire.available() == size) {  // Ensure 5 bytes are received
+    if (Wire.available() == size) {   // Ensure 5 bytes are received
       for (int i = 0; i < size; i++) {
+        if (sensorReadings[i] != 0) allZeros = false;  // If any value is non-zero, set the flag to false
+
         receivedData[i] = Wire.read();
         ThingSpeak.setField(i + 1, receivedData[i]);
         Serial.print(receivedData[i]);
         Serial.print(" ");
       }
       Serial.println();
-    }
-    else {
+    } else {
       Serial.println("Error: Received less than expected bytes!");
       while (Wire.available()) Wire.read();                     // Clear buffer
     }                                                           // Newline after printing all data
-    String msg = "Gas Estimates updated at: " + printTime();           // Construct the status message with the current timestamp
+    String msg = "Gas Estimates updated at: " + printTime();    // Construct the status message with the current timestamp
     ThingSpeak.setStatus(msg);                                  // Set the ThingSpeak channel status with the timestamp message
     Serial.println(msg);                                        // Print the status message to the Serial Monitor
     int x = ThingSpeak.writeFields(ChannelIDs[2], APIKeys[2]);  // Write the fields to ThingSpeak
     if (x == 200) {                                             // If the update is successful
       Serial.println("Channel update successful.");             // Print success message
-    }
-    else {                                                    // If there was an error with the HTTP request
+    } else {                                                    // If there was an error with the HTTP request
       Serial.println(" HTTP error code " + String(x));          // Print HTTP error code to help debug
     }
   }
@@ -72,8 +73,7 @@ void getTime() {
   if (numberOfTries == maxTries) {                       // If the maximum retries are reached
     Serial.print("NTP unreachable!!");                   // Print error message
     wifiConnect();                                       //
-  }
-  else {
+  } else {
     Serial.print("Epoch received: ");  // Print the fetched epoch time
     Serial.println(epoch);             // Print the actual epoch value
     rtc.setEpoch(epoch);               // Set the RTC with the fetched epoch time
