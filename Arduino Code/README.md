@@ -35,13 +35,13 @@ This repository illustrates two coding paradigms for Arduino projects: **Consoli
 ## Coding Paradigms
 
 ### 1. Consolidated Code
-In the **Consolidated** approach, all logic, configurations, and dependencies are grouped into a single project directory. This simple and compact structure can become harder to manage as the project scales.
+In the **Consolidated** approach, the code combines increased logic complexity to reduce the effort required for manual setup and deployment. While this approach requires a deeper understanding of the integrated structure, it significantly streamlines human tasks.
 
 #### Characteristics:
-- **Centralized:** All code and configurations are in one location.
-- **Specificity:** Designed for a single hardware configuration (e.g., Smoke_MKR, Smoke_Nicla).
-- **Ease of Deployment:** Ideal for small projects with unnecessary modularity.
-- **Code Duplication:** Similar functionality may require repeating code across projects.
+- **Centralized:** All logic, configurations, and dependencies are grouped into a single directory, minimising the need for manual intervention.
+- **Reduced Setup Effort:** Designed to simplify deployment, making it easier to upload and run without constant reconfiguration.
+- **Ease of Deployment:** It is easier to upload and go without re-uploading different modules.
+- **Code Duplication:** Removes redundant duplicate code across modules.
 
 #### Example:
 - **Smoke_MKR:** Contains the main `Smoke_MKR.ino` file and `secrets.h` for managing sensitive data.
@@ -53,22 +53,11 @@ The **Modular** approach divides functionality into discrete modules, each focus
 #### Characteristics:
 - **Separation of Concerns:** Each module performs a distinct role (e.g., data collection, classification, communication).
 - **Scalability:** Simplifies adding or modifying functionality.
-- **Complexity:** Initial setup and integration may require more effort.
 
 #### Example:
-- **BackUpVOC_MKR:** Handles specific VOC backup tasks for the MKR board.
+- **BackUpVOC_MKR:** Handles specific VOC tasks for the MKR board as the project back up.
 - **Nicla_BSEC2_Classifier_Slave_Sender:** Focuses on transmitting classifier data from the Nicla board.
-- **MKR_Master_to_ThingSpeak:** Implements data transmission to ThingSpeak, demonstrating integration with external services.
-
-
-## When to Use Each Approach
-- **Consolidated Approach:**
-  - Suitable for small-scale or one-off projects.
-  - Best for simple setups requiring minimal changes.
-
-- **Modular Approach:**
-  - Ideal for larger, more complex projects.
-  - Useful when the functionality needs to be shared across multiple projects or hardware configurations.
+- **MKR_Master_to_ThingSpeak:** Implements data transmission to ThingSpeak.
 
 ## Contribution and Usage
 Refer to the individual `README.md` files in each project or module folder for specific instructions and details.

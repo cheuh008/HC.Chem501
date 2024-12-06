@@ -7,79 +7,105 @@
 //       modes: 0: Standalone, 1: BSEC2Classifier, 2: BSEC2Collector
 // =======================================================================================================================
 
-#include <Wire.h>
+// =======================================================================================================================
+// Importing the Library and defining variables
+// =======================================================================================================================
+
+#include "Wire.h"
 #include "Arduino.h"
 #include "Arduino_BHY2.h"
 #include "BSEC2CONFIG.h"
 #include "CONFIG_BSEC2_HP.h"
 
-// =======================================================================================================================
-//  Sensor Define
-//  =======================================================================================================================
-
-int mode = 1;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
+int input;
+int mode = 2;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
 SensorBSEC2 bsec2(SENSOR_ID_BSEC2);  //
 SensorBSEC2Collector bsec2Collector(SENSOR_ID_BSEC2_COLLECTOR);
 
 // =======================================================================================================================
-//  Setup Function to initialise BHY2 and Wire
+//  Setup and Mainloop initialises and calls functions as needed
 //  =======================================================================================================================
 
 void setup() {                   //
+  Serial.begin(115200);          //
   BHY2.begin();                  //
   Wire.begin(2);                 // join i2c bus (address optional for master)
   Wire.onRequest(requestEvent);  // register event
+  Wire.onReceive(modeSelector);  // register event
   conditional();                 // Function to turn on/off sensors
 }
 
+void loop() {
+  BHY2.update();                 //
+  if (Serial.available() > 0) {  // Check if data is available on the serial port
+    input = Serial.parseInt();   // Read integer input
+    Serial.read();               // Clear the buffer after parsing
+    modeSelector(input);         //
+  }                              //
+  serialiser();                  //
+}
+
 // =======================================================================================================================
-//  Sensor Define
+//  Initialising Sensors Based on Mode
 //  =======================================================================================================================
 
 void conditional() {
-  if (mode == 0) {
-    bsec2.end();
-    bsec2Collector.end();
-  } else if (mode == 1) {
+  Serial.println("Initialising Sensors ");  //
+  if (mode == 1) {
     bsec2Collector.end();
     sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
     bsec2.begin();
+    Serial.println("Identifier On ");
   } else if (mode == 2) {
     bsec2.end();
     sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
     bsec2Collector.begin();
+    Serial.println("Collector On ");
+  } else {
+    bsec2.end();
+    bsec2Collector.end();
+    Serial.println("Senosrs Turned Off ");
   }
 }
 
-void loop() {
-  BHY2.update();  //
-  modeSelector();
-  serialiser();
-}
+// =======================================================================================================================
+//  For printing to Serial if connected
+//  =======================================================================================================================
 
-void modeSelector() {
-  if (Serial.available() > 0) {             // Check if data is available on the serial port
-    int input = Serial.parseInt();          // Read integer input
-    if (input >= 0 && input <= 2) {         // Validate the mode
-      mode = input;                         // Update the mode
-      Serial.print("mode updated to: ");    //
-      Serial.println(mode);                 //
-      conditional();                        // Reinitialize sensors based on the new mode
-    } else {                                //
-      Serial.println("mode: 0, 1, or 2.");  //
+void serialiser() {                      //
+  static auto printTime = millis();      //
+  if (millis() - printTime >= 1000) {    //
+    printTime = millis();                //
+    if (mode == 1) {                     //
+      Serial.println(bsec2.toString());  //
+    } else if (mode == 2) {              //
+      Serial.println(
+        String((uint32_t)bsec2Collector.timestamp()) + " "
+        + String(bsec2Collector.temperature()) + " "
+        + String(bsec2Collector.pressure()) + " "
+        + String(bsec2Collector.humidity()) + " "
+        + String(bsec2Collector.gas()) + " "
+        + String(bsec2Collector.gas_index()));
     }
   }
 }
 
-void serialiser() {
-  if (mode == 1) {
-    static auto printTime = millis();
-    if (millis() - printTime >= 1000) {
-      printTime = millis();
-      Serial.println(bsec2.toString());
-    }
+void modeSelector(int input) {
+  if (Wire.available()) {                 //
+    input = Wire.read();                  //
+  }
+  if (input >= 0 && input <= 2) {  // Validate the mode
+    mode = input;                         // Update the mode
+    Serial.print("Mode: ");               //
+    Serial.print(mode);                   //
+    Serial.println(" selected ");         //
+    conditional();                        // Reinitialize sensors based on the new mode
+  } else {                                //
+    Serial.println("Invalid Input ");     //
+    Serial.println("Default mode selected ");
   }
 }
+
 
 void requestEvent() {
   if (mode == 1) {

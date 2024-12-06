@@ -2,36 +2,27 @@
 # Python Data Visualization Tool for ThingSpeak Channels
 
  - This Python project fetches, cleans, and visualizes data from ThingSpeak channels, saving data in SQLite databases and CSV files. It generates individual and grid-based visualizations of channel data.
+## Table of Contents
 
-<div style="float: left; width: 25%; padding-right: 10px; box-sizing: border-box;">
-  <h2>Table of Contents</h2>
-  <ul>
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#file-structure">File Structure</a></li>
-    <li><a href="#prerequisites">Prerequisites</a></li>
-    <li><a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#step-1-configure-channels">Step 1: Configure Channels</a></li>
-        <li><a href="#step-2-run-the-main-script">Step 2: Run the Main Script</a></li>
-        <li><a href="#step-3-view-results">Step 3: View Results</a></li>
-      </ul>
-    </li>
-    <li><a href="#modules">Modules</a>
-      <ul>
-        <li><a href="#1-mainpy">main.py</a></li>
-        <li><a href="#2-dbhandlerpy">dbHandler.py</a></li>
-        <li><a href="#3-plottingpy">plotting.py</a></li>
-        <li><a href="#4-configpy">config.py</a></li>
-      </ul>
-    </li>
-    <li><a href="#example-output">Example Output</a></li>
-    <li><a href="#future-enhancements">Future Enhancements</a></li>
-    <li><a href="#issues-and-troubleshooting">Issues and Troubleshooting</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#author">Author</a></li>
-  </ul>
-</div>
+- [Overview](#overview)
+- [Features](#features)
+- [File Structure](#file-structure)
+- [Prerequisites](#prerequisites)
+- [Usage](#usage)
+  - [Step 1: Configure Channels](#step-1-configure-channels)
+  - [Step 2: Run the Main Script](#step-2-run-the-main-script)
+  - [Step 3: View Results](#step-3-view-results)
+- [Modules](#modules)
+  - [1. main.py](#1-mainpy)
+  - [2. dbHandler.py](#2-dbhandlerpy)
+  - [3. plotting.py](#3-plottingpy)
+  - [4. config.py](#4-configpy)
+- [Example Output](#example-output)
+- [Future Enhancements](#future-enhancements)
+- [Issues and Troubleshooting](#issues-and-troubleshooting)
+- [License](#license)
+- [Author](#author)
+
 
 ## Overview
 
@@ -74,8 +65,10 @@ Project Root
 ├── plotting.py             # Handles data visualization and plot generation.
 ├── config.py               # Manages channel configuration and API keys.
 ├── keys.json               # Stores API keys securely (excluded from Git).
-├── config.json             # Stores channel configurations (auto-generated).
+├── config.json             # Stores channel configurations (auto-generated and excluded from Git).
 ├── plots/                  # Folder where all plots are saved.
+├── cleaned_plots/          # Folder where custom plots are saved.
+├── data/                   # Folder data points are manually moved and saved here.
 ├── requirements.txt        # Python dependencies.
 ``` 
 
