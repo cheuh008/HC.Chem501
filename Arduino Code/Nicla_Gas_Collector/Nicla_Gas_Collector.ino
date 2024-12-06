@@ -1,52 +1,106 @@
-/* 
- * This sketch is used for collecting raw data of BME688, 
-   and the data log after conversion with the helper tools can be used in Bosch Sensortec's AI Studio to train an algorithm 
-   and generate the corresponding config string for the BSEC2 library which can be later used for gas type classification/scanning
-*/
+#include <Arduino_BHY2.h>
 
+// =======================================================================================================================
+//  # BME688 Data Collection & Classification Sketch
+//  =======================================================================================================================
+//    Based on: App.ino, BSEC2GasScannerClassify.ino  and Wire  Sender by Nicholas Zambetti <http://www.zambetti.com>
+// Description: 0 Defaults to periferal use or 1. Collects raw BME688 data for gas classification / 2. AI Studio training
+//   Edited by: Harry Cheung (@cheuh008) | Details: https://github.com/cheuh008/HC.Chem501
+//       modes: 0: Standalone, 1: BSEC2Classifier, 2: BSEC2Collector
+// =======================================================================================================================
+
+#include <Wire.h>
 #include "Arduino.h"
 #include "Arduino_BHY2.h"
+#include "BSEC2CONFIG.h"
+#include "CONFIG_BSEC2_HP.h"
 
+// =======================================================================================================================
+//  Sensor Define
+//  =======================================================================================================================
+
+int mode = 1;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
+SensorBSEC2 bsec2(SENSOR_ID_BSEC2);  //
 SensorBSEC2Collector bsec2Collector(SENSOR_ID_BSEC2_COLLECTOR);
 
-#define CONFIG_BSEC2_USE_DEAULT_HP 1
+// =======================================================================================================================
+//  Setup Function to initialise BHY2 and Wire
+//  =======================================================================================================================
 
-#if CONFIG_BSEC2_USE_DEAULT_HP
-// Default Heater temperature and time base(Recommendation)
-const uint16_t BSEC2HP_TEMP[] = {320, 100, 100, 100, 200, 200, 200, 320, 320, 320}; // HP-354 / 
-const uint16_t BSEC2HP_DUR[] = {5, 2, 10, 30, 5, 5, 5, 5, 5, 5};  // the duration in steps of 140ms, 5 means 700ms, 2 means 280ms
-#else
-// customized Heater temperature and time base
-const uint16_t BSEC2HP_TEMP[] = {100, 320, 320, 200, 200, 200, 320, 320, 320, 320}; // HP-321 / 
-const uint16_t BSEC2HP_DUR[] = {43, 2, 2, 2, 21, 21, 2, 14, 14, 14};  // the duration in steps of 140ms, 5 means 700ms, 2 means 280ms
-#endif
-
-void setup()
-{
-  Serial.begin(115200);
-  while(!Serial);
-
-  BHY2.begin();
-  sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR)); 
-  
-  bsec2Collector.begin();
+void setup() {                   //
+  BHY2.begin();                  //
+  Wire.begin(2);                 // join i2c bus (address optional for master)
+  Wire.onRequest(requestEvent);  // register event
+  conditional();                 // Function to turn on/off sensors
 }
 
-void loop()
-{
-  static auto last_index = 0;
+// =======================================================================================================================
+//  Sensor Define
+//  =======================================================================================================================
 
-  // Update function should be continuously polled
-  BHY2.update();
+void conditional() {
+  if (mode == 0) {
+    bsec2.end();
+    bsec2Collector.end();
+  } else if (mode == 1) {
+    bsec2Collector.end();
+    sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
+    bsec2.begin();
+  } else if (mode == 2) {
+    bsec2.end();
+    sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
+    bsec2Collector.begin();
+  }
+}
 
-  if (last_index != bsec2Collector.gas_index()) {
-    last_index = bsec2Collector.gas_index();
-    Serial.println(String((uint32_t)bsec2Collector.timestamp()) + " " 
-              + String(bsec2Collector.temperature()) + " " 
-              + String(bsec2Collector.pressure()) + " " 
-              + String(bsec2Collector.humidity()) + " " 
-              + String(bsec2Collector.gas()) + " " 
-              + String(bsec2Collector.gas_index()) 
-              );
+void loop() {
+  BHY2.update();  //
+  modeSelector();
+  serialiser();
+}
+
+void modeSelector() {
+  if (Serial.available() > 0) {             // Check if data is available on the serial port
+    int input = Serial.parseInt();          // Read integer input
+    if (input >= 0 && input <= 2) {         // Validate the mode
+      mode = input;                         // Update the mode
+      Serial.print("mode updated to: ");    //
+      Serial.println(mode);                 //
+      conditional();                        // Reinitialize sensors based on the new mode
+    } else {                                //
+      Serial.println("mode: 0, 1, or 2.");  //
+    }
+  }
+}
+
+void serialiser() {
+  if (mode == 1) {
+    static auto printTime = millis();
+    if (millis() - printTime >= 1000) {
+      printTime = millis();
+      Serial.println(bsec2.toString());
+    }
+  }
+}
+
+void requestEvent() {
+  if (mode == 1) {
+    uint8_t dataToSend[5] = {
+      bsec2.gas_estimates0(),
+      bsec2.gas_estimates1(),
+      bsec2.gas_estimates2(),
+      bsec2.gas_estimates3(),
+      bsec2.accuracy()
+    };
+    Wire.write(dataToSend, sizeof(dataToSend));
+  } else if (mode == 2) {
+    String data = "";
+    data += (String((uint32_t)bsec2Collector.timestamp()) + " "
+             + String(bsec2Collector.temperature()) + " "
+             + String(bsec2Collector.pressure()) + " "
+             + String(bsec2Collector.humidity()) + " "
+             + String(bsec2Collector.gas()) + " "
+             + String(bsec2Collector.gas_index()));
+    Wire.write(data.c_str());
   }
 }
