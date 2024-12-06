@@ -10,6 +10,8 @@ The project/directory can be broken down into 3 main categories with the method 
 to train a custom solvent config. Or use the preconfigured data string in Arduino Code 
 3. Data Processing and visualisation
    - Use Python to download data from your own thingSpeak Channel, or use cleaned data from `thingspeak_data.db` to create plots using given data
+  
+![WorkFlowDiagram](Workflow.png) 
 
 ---
 ## Method: 
