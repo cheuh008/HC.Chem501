@@ -18,7 +18,7 @@
 #include "CONFIG_BSEC2_HP.h"
 
 int input;
-int mode = 2;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
+int mode = 1;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
 SensorBSEC2 bsec2(SENSOR_ID_BSEC2);  //
 SensorBSEC2Collector bsec2Collector(SENSOR_ID_BSEC2_COLLECTOR);
 
