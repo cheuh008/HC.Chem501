@@ -1,0 +1,301 @@
+{
+  "meta": {
+    "appVersion": "2.3.4",
+    "exportedAt": "2024-11-25T17:54:20.729Z"
+  },
+  "data": {
+    "specimenData": {
+      "id": 3,
+      "uuid": "74cc7f5f-b9fa-4c11-b637-132897f1c6fd",
+      "comment": null,
+      "startTime": 0,
+      "endTime": -7388366,
+      "cloneOfUuid": null,
+      "measurementSessionId": 3,
+      "createdAt": "2024-11-25T17:53:39.000Z",
+      "updatedAt": "2024-11-25T17:53:39.000Z",
+      "label": "Acetic Acid 4",
+      "metaData": []
+    },
+    "measurementSession": {
+      "id": 3,
+      "uuid": "f6399899-637d-419c-941c-ef3fe0079e19",
+      "name": "4",
+      "startTime": "2024-11-24T22:22:17.000Z",
+      "endTime": "2024-11-24T20:19:08.000Z",
+      "boardId": "1730555495",
+      "createdAt": "2024-11-25T17:53:39.000Z",
+      "updatedAt": "2024-11-25T17:53:39.000Z"
+    },
+    "boardConfig": {
+      "id": 3,
+      "boardMode": "heater_profile_exploration",
+      "measurementSessionId": 3,
+      "boardTypeId": 1,
+      "createdAt": "2024-11-25T17:53:39.000Z",
+      "updatedAt": "2024-11-25T17:53:39.000Z"
+    },
+    "boardType": {
+      "id": 1,
+      "uid": "board_8",
+      "name": "BME688 Development Kit",
+      "numSensors": 8,
+      "createdAt": "2024-11-25T17:46:40.140Z",
+      "updatedAt": "2024-11-25T17:46:40.140Z"
+    },
+    "heaterProfiles": [
+      {
+        "id": 6,
+        "uid": "heater_354",
+        "name": "HP-354",
+        "useCase": "Standard BST profile",
+        "timeBase": 140,
+        "steps": [
+          {
+            "temperature": 320,
+            "duration": 5
+          },
+          {
+            "temperature": 100,
+            "duration": 2
+          },
+          {
+            "temperature": 100,
+            "duration": 10
+          },
+          {
+            "temperature": 100,
+            "duration": 30
+          },
+          {
+            "temperature": 200,
+            "duration": 5
+          },
+          {
+            "temperature": 200,
+            "duration": 5
+          },
+          {
+            "temperature": 200,
+            "duration": 5
+          },
+          {
+            "temperature": 320,
+            "duration": 5
+          },
+          {
+            "temperature": 320,
+            "duration": 5
+          },
+          {
+            "temperature": 320,
+            "duration": 5
+          }
+        ],
+        "createdAt": "2024-11-25T17:46:40.119Z",
+        "updatedAt": "2024-11-25T17:46:40.119Z"
+      }
+    ],
+    "dutyCycleProfiles": [
+      {
+        "id": 1,
+        "uid": "duty_1",
+        "name": "RDC-1-0 Continuous",
+        "description": "This is a continous duty cycle profile, which is best suited for maximum data acquisition, but with maximum power consumption. Please not that the sensor will significantly warm up in continous duty cycle profile.",
+        "energyConsumption": 12,
+        "scanningCycles": 1,
+        "sleepingCycles": 0,
+        "createdAt": "2024-11-25T17:46:40.129Z",
+        "updatedAt": "2024-11-25T17:46:40.129Z"
+      }
+    ],
+    "sensorConfigs": [
+      {
+        "id": 17,
+        "boardConfigId": 3,
+        "sensorId": 17,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 18,
+        "boardConfigId": 3,
+        "sensorId": 18,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 19,
+        "boardConfigId": 3,
+        "sensorId": 19,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 20,
+        "boardConfigId": 3,
+        "sensorId": 20,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 21,
+        "boardConfigId": 3,
+        "sensorId": 21,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 22,
+        "boardConfigId": 3,
+        "sensorId": 22,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 23,
+        "boardConfigId": 3,
+        "sensorId": 23,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 24,
+        "boardConfigId": 3,
+        "sensorId": 24,
+        "heaterProfileId": 6,
+        "dutyCycleProfileId": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      }
+    ],
+    "sensors": [
+      {
+        "id": 17,
+        "index": 0,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 18,
+        "index": 1,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 19,
+        "index": 2,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 20,
+        "index": 3,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 21,
+        "index": 4,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 22,
+        "index": 5,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 23,
+        "index": 6,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      },
+      {
+        "id": 24,
+        "index": 7,
+        "createdAt": "2024-11-25T17:53:39.000Z",
+        "updatedAt": "2024-11-25T17:53:39.000Z"
+      }
+    ],
+    "cycles": [],
+    "dataColumns": [
+      {
+        "name": "Data Point ID",
+        "unit": "",
+        "format": "integer",
+        "key": "data_point_id"
+      },
+      {
+        "name": "Resistance Gassensor",
+        "unit": "Ohms",
+        "format": "float",
+        "key": "resistance_gassensor"
+      },
+      {
+        "name": "Temperature",
+        "unit": "DegreesCelsius",
+        "format": "float",
+        "key": "temperature"
+      },
+      {
+        "name": "Pressure",
+        "unit": "Hectopascals",
+        "format": "float",
+        "key": "pressure"
+      },
+      {
+        "name": "Relative Humidity",
+        "unit": "Percent",
+        "format": "float",
+        "key": "relative_humidity"
+      },
+      {
+        "name": "Time Since PowerOn",
+        "unit": "Milliseconds",
+        "format": "integer",
+        "key": "timestamp_since_poweron"
+      },
+      {
+        "name": "Real time clock",
+        "unit": "Unix Timestamp: seconds since Jan 01 1970. (UTC); 0 = missing",
+        "format": "integer",
+        "key": "real_time_clock"
+      },
+      {
+        "name": "Error Code",
+        "unit": "",
+        "format": "integer",
+        "key": "error_code"
+      },
+      {
+        "name": "Cycle Step Index",
+        "unit": "",
+        "format": "integer",
+        "key": "cycle_step_index"
+      },
+      {
+        "name": "Cycle ID",
+        "unit": "",
+        "format": "integer",
+        "key": "cycle_id"
+      }
+    ],
+    "specimenDataPoints": []
+  }
+}
