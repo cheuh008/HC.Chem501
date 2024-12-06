@@ -9,7 +9,6 @@
 #include "secrets.h"                    // Include file with sensitive info like SSID, password, ThingSpeak API keys
 #include "ThingSpeak.h"                 // ThingSpeak library for cloud data logging
 #include <ArduinoMqttClient.h>          //
-#include "Firebase_Arduino_WiFiNINA.h"  //
 
 //======================================================================================================================================================
 // Declaring Global Variables
@@ -17,11 +16,11 @@
 
 RTCZero rtc;                      // Real-time clock instance for managing date and time
 WiFiClient client;                // Client to establish Wi-Fi connections
-FirebaseData fbdo;                // Define Firebase data object
+// FirebaseData fbdo;                // Define Firebase data object
 MqttClient mqttClient(client);    //
 const long interval = 1000;       //
 uint8_t receivedData[5];          //
-int size = sizeof(receivedData);  //
+int size = sizeof(receivedData)/receivedData[5];  //
 bool allZeros = true;             // Flag to track if all sensor readings are zero
 
 //======================================================================================================================================================
