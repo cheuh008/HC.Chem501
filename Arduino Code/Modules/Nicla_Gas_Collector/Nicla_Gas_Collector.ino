@@ -11,20 +11,19 @@ const uint16_t BSEC2HP_DUR[] = { 5, 2, 10, 30, 5, 5, 5, 5, 5, 5 };              
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial) delay(1000);
   BHY2.begin();
   sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
   bsec2Collector.begin();
 }
 
 void loop() {
-
   BHY2.update();
-
   Serial.println(String((uint32_t)bsec2Collector.timestamp()) + " "
                  + String(bsec2Collector.temperature()) + " "
                  + String(bsec2Collector.pressure()) + " "
                  + String(bsec2Collector.humidity()) + " "
                  + String(bsec2Collector.gas()) + " "
                  + String(bsec2Collector.gas_index()));
-delay(1000)
+  delay(1000);
 }
