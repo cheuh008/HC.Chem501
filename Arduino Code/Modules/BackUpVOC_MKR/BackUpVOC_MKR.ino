@@ -56,7 +56,7 @@ void sendData(String sensorData[]) {
   Serial.println();                                           // Newline after printing all sensor values
   String msg = "VOC values updated at: " + printTime();       // Construct the status message with the current timestamp
   ThingSpeak.setStatus(msg);                                  // Set the ThingSpeak channel status with the timestamp message
-  int x = ThingSpeak.writeFields(ChannelIDs[3], APIKeys[3]);  // Write the fields to ThingSpeak
+  int x = ThingSpeak.writeFields(ChannelIDs[0], APIKeys[0]);  // Write the fields to ThingSpeak
   if (x == 200) {                                             // If the update is successful
     Serial.println("Channel update successful.");             // Print success message
     Serial.println(msg);                                      // Print the status message to the Serial Monitor
