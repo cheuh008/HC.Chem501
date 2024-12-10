@@ -56,11 +56,12 @@ void sendData(String sensorData[]) {
   Serial.println();                                           // Newline after printing all sensor values
   String msg = "VOC values updated at: " + printTime();       // Construct the status message with the current timestamp
   ThingSpeak.setStatus(msg);                                  // Set the ThingSpeak channel status with the timestamp message
-  int x = ThingSpeak.writeFields(ChannelIDs[0], APIKeys[0]);  // Write the fields to ThingSpeak
+  int x = ThingSpeak.writeFields(ChannelIDs[1], APIKeys[1]);  // Write the fields to ThingSpeak
   if (x == 200) {                                             // If the update is successful
     Serial.println("Channel update successful.");             // Print success message
     Serial.println(msg);                                      // Print the status message to the Serial Monitor
-  } else {                                                    // If there was an error with the HTTP request
+  }
+  else {                                                    // If there was an error with the HTTP request
     Serial.println(" HTTP error code " + String(x));          // Print HTTP error code to help debug
   }
 }
@@ -88,7 +89,8 @@ void getTime() {
     Serial.print("NTP unreachable!!");                   // Print error message
     delay(5000);                                         // Wait 5 seconds before attempting to reconnect
     wifiConnect();                                       //
-  } else {
+  }
+  else {
     Serial.print("Epoch received: ");  // Print the fetched epoch time
     Serial.println(epoch);             // Print the actual epoch value
     rtc.setEpoch(epoch);               // Set the RTC with the fetched epoch time
