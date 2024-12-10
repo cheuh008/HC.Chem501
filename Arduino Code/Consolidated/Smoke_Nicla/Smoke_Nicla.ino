@@ -53,15 +53,18 @@ void conditional() {
   Serial.println("Initialising Sensors ");  //
   if (mode == 1) {
     bsec2Collector.end();
+    uint8_t BSEC2CONFIG[1943] = AgedAmChHeTHF;
     sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
     bsec2.begin();
     Serial.println("Identifier On ");
-  } else if (mode == 2) {
+  }
+  else if (mode == 2) {
     bsec2.end();
     sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
     bsec2Collector.begin();
     Serial.println("Collector On ");
-  } else {
+  }
+  else {
     bsec2.end();
     bsec2Collector.end();
     Serial.println("Senosrs Turned Off ");
@@ -78,7 +81,8 @@ void serialiser() {                      //
     printTime = millis();                //
     if (mode == 1) {                     //
       Serial.println(bsec2.toString());  //
-    } else if (mode == 2) {              //
+    }
+    else if (mode == 2) {              //
       Serial.println(
         String((uint32_t)bsec2Collector.timestamp()) + " "
         + String(bsec2Collector.temperature()) + " "
@@ -100,7 +104,8 @@ void modeSelector(int input) {
     Serial.print(mode);                   //
     Serial.println(" selected ");         //
     conditional();                        // Reinitialize sensors based on the new mode
-  } else {                                //
+  }
+  else {                                //
     Serial.println("Invalid Input ");     //
     Serial.println("Default mode selected ");
   }
@@ -117,14 +122,15 @@ void requestEvent() {
       bsec2.accuracy()
     };
     Wire.write(dataToSend, sizeof(dataToSend));
-  } else if (mode == 2) {
+  }
+  else if (mode == 2) {
     String data = "";
     data += (String((uint32_t)bsec2Collector.timestamp()) + " "
-             + String(bsec2Collector.temperature()) + " "
-             + String(bsec2Collector.pressure()) + " "
-             + String(bsec2Collector.humidity()) + " "
-             + String(bsec2Collector.gas()) + " "
-             + String(bsec2Collector.gas_index()));
+      + String(bsec2Collector.temperature()) + " "
+      + String(bsec2Collector.pressure()) + " "
+      + String(bsec2Collector.humidity()) + " "
+      + String(bsec2Collector.gas()) + " "
+      + String(bsec2Collector.gas_index()));
     Wire.write(data.c_str());
   }
 }
