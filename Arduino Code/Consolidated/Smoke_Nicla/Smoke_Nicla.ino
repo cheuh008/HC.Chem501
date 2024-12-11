@@ -53,92 +53,96 @@ void conditional() {
   Serial.println("Initialising Sensors ");  //
   if (mode == 1) {
     bsec2Collector.end();
-    uint8_t BSEC2CONFIG[1943];
-    while (Serial.available() == 0) {
-      if (Serial.available() > 0) {
-        int input = Serial.parseInt();  // Read integer input
-        Serial.read();                  // Clear the buffer after parsing
-        if (input >= 1 && input <= 9) {
-          int index = input - 1;  // Convert 1-9 to 0-8 for indexing
-          memcpy(BSEC2CONFIG, configs[index], sizeof(BSEC2CONFIG));
-          Serial.print("Configuration " + String(input) + " loaded: ");
-          Serial.println(configNames[index]);
-        }
-      }
-      sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
+    // Ask user for configuration after mode 1 is selected
+    Serial.println("Select Configuration (1-9):");
+    for (int i = 0; i < 9; i++) {
+      Serial.print(configNames[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
+    while (Serial.available() == 0)
+      ;
+    int configChoice = Serial.parseInt();  // Get user input (1-9)
+    Serial.read();
+    if (configChoice >= 1 && configChoice <= 9) {
+      uint8_t* selectedConfig = configArray[configChoice - 1];     // For index start at 0
+      sensortec.bhy2_bsec2_setConfigString(selectedConfig, 1943);  // Pass selected config to the sensor
       bsec2.begin();
-      Serial.println("Identifier On ");
+      Serial.print(configNames[configChoice - 1]);
+      Serial.println(" Classifier On.");
+    } else {
+      Serial.println("Invalid configuration selected.");
     }
-    else if (mode == 2) {
-      bsec2.end();
-      sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
-      bsec2Collector.begin();
-      Serial.println("Collector On ");
-    }
-    else {
-      bsec2.end();
-      bsec2Collector.end();
-      Serial.println("Senosrs Turned Off ");
+
+  } else if (mode == 2) {
+    bsec2.end();
+    sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
+    bsec2Collector.begin();
+    Serial.println("Collector On ");
+  } else {
+    bsec2.end();
+    bsec2Collector.end();
+    Serial.println("Senosrs Turned Off ");
+  }
+}
+
+// =======================================================================================================================
+//  For printing to Serial if connected
+//  =======================================================================================================================
+
+void serialiser() {                      //
+  static auto printTime = millis();      //
+  if (millis() - printTime >= 1000) {    //
+    printTime = millis();                //
+    if (mode == 1) {                     //
+      Serial.println(bsec2.toString());  //
+    } else if (mode == 2) {              //
+      Serial.println(
+        String((uint32_t)bsec2Collector.timestamp()) + " "
+        + String(bsec2Collector.temperature()) + " "
+        + String(bsec2Collector.pressure()) + " "
+        + String(bsec2Collector.humidity()) + " "
+        + String(bsec2Collector.gas()) + " "
+        + String(bsec2Collector.gas_index()));
     }
   }
+}
 
-  // =======================================================================================================================
-  //  For printing to Serial if connected
-  //  =======================================================================================================================
-
-  void serialiser() {                      //
-    static auto printTime = millis();      //
-    if (millis() - printTime >= 1000) {    //
-      printTime = millis();                //
-      if (mode == 1) {                     //
-        Serial.println(bsec2.toString());  //
-      } else if (mode == 2) {              //
-        Serial.println(
-          String((uint32_t)bsec2Collector.timestamp()) + " "
-          + String(bsec2Collector.temperature()) + " "
-          + String(bsec2Collector.pressure()) + " "
-          + String(bsec2Collector.humidity()) + " "
-          + String(bsec2Collector.gas()) + " "
-          + String(bsec2Collector.gas_index()));
-      }
-    }
+void modeSelector(int input) {
+  if (Wire.available()) {  //
+    input = Wire.read();   //
   }
-
-  void modeSelector(int input) {
-    if (Wire.available()) {  //
-      input = Wire.read();   //
-    }
-    if (input >= 0 && input <= 2) {      // Validate the mode
-      mode = input;                      // Update the mode
-      Serial.print("Mode: ");            //
-      Serial.print(mode);                //
-      Serial.println(" selected ");      //
-      conditional();                     // Reinitialize sensors based on the new mode
-    } else {                             //
-      Serial.println("Invalid Input ");  //
-      Serial.println("Default mode selected ");
-    }
+  if (input >= 0 && input <= 2) {      // Validate the mode
+    mode = input;                      // Update the mode
+    Serial.print("Mode: ");            //
+    Serial.print(mode);                //
+    Serial.println(" selected ");      //
+    conditional();                     // Reinitialize sensors based on the new mode
+  } else {                             //
+    Serial.println("Invalid Input ");  //
+    Serial.println("Default mode selected ");
   }
+}
 
 
-  void requestEvent() {
-    if (mode == 1) {
-      uint8_t dataToSend[5] = {
-        bsec2.gas_estimates0(),
-        bsec2.gas_estimates1(),
-        bsec2.gas_estimates2(),
-        bsec2.gas_estimates3(),
-        bsec2.accuracy()
-      };
-      Wire.write(dataToSend, sizeof(dataToSend));
-    } else if (mode == 2) {
-      String data = "";
-      data += (String((uint32_t)bsec2Collector.timestamp()) + " "
-               + String(bsec2Collector.temperature()) + " "
-               + String(bsec2Collector.pressure()) + " "
-               + String(bsec2Collector.humidity()) + " "
-               + String(bsec2Collector.gas()) + " "
-               + String(bsec2Collector.gas_index()));
-      Wire.write(data.c_str());
-    }
+void requestEvent() {
+  if (mode == 1) {
+    uint8_t dataToSend[5] = {
+      bsec2.gas_estimates0(),
+      bsec2.gas_estimates1(),
+      bsec2.gas_estimates2(),
+      bsec2.gas_estimates3(),
+      bsec2.accuracy()
+    };
+    Wire.write(dataToSend, sizeof(dataToSend));
+  } else if (mode == 2) {
+    String data = "";
+    data += (String((uint32_t)bsec2Collector.timestamp()) + " "
+             + String(bsec2Collector.temperature()) + " "
+             + String(bsec2Collector.pressure()) + " "
+             + String(bsec2Collector.humidity()) + " "
+             + String(bsec2Collector.gas()) + " "
+             + String(bsec2Collector.gas_index()));
+    Wire.write(data.c_str());
   }
+}
