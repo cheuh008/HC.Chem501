@@ -18,9 +18,9 @@
 #include "CONFIG_BSEC2_HP.h"
 
 int input;
-int mode = 1;                        // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
-SensorBSEC2 bsec2(SENSOR_ID_BSEC2);  //
+int mode = 1;  // Default mode: 0 for Standalone, 1 for Classifier, 2 for Collector
 SensorBSEC2Collector bsec2Collector(SENSOR_ID_BSEC2_COLLECTOR);
+SensorBSEC2 bsec2(SENSOR_ID_BSEC2);  //
 
 // =======================================================================================================================
 //  Setup and Mainloop initialises and calls functions as needed
@@ -36,13 +36,13 @@ void setup() {                   //
 }
 
 void loop() {
-  BHY2.update();                 //
+  BHY2.update();
+  serialiser();                  //
   if (Serial.available() > 0) {  // Check if data is available on the serial port
     input = Serial.parseInt();   // Read integer input
     Serial.read();               // Clear the buffer after parsing
     modeSelector(input);         //
   }                              //
-  serialiser();                  //
 }
 
 // =======================================================================================================================
@@ -50,9 +50,10 @@ void loop() {
 //  =======================================================================================================================
 
 void conditional() {
+  bsec2.end();  // Cuz u have to turn it off and back on again?
+  bsec2Collector.end();
   Serial.println("Initialising Sensors ");  //
   if (mode == 1) {
-    bsec2Collector.end();
     // Ask user for configuration after mode 1 is selected
     Serial.println("Select Configuration (1-9):");
     for (int i = 0; i < 9; i++) {
@@ -60,28 +61,30 @@ void conditional() {
       Serial.print(", ");
     }
     Serial.println();
-    while (Serial.available() == 0)
-      ;
+    while (Serial.available() == 0) {
+    }
     int configChoice = Serial.parseInt();  // Get user input (1-9)
     Serial.read();
     if (configChoice >= 1 && configChoice <= 9) {
-      uint8_t* selectedConfig = configArray[configChoice - 1];     // For index start at 0
-      sensortec.bhy2_bsec2_setConfigString(selectedConfig, 1943);  // Pass selected config to the sensor
-      bsec2.begin();
+      memcpy(buffer, configArray[configChoice - 1], 1943);
+      for (int i = 0; i < 10; i++) { 
+        Serial.print(String(buffer[1933 + i]) + ", ");
+      }
+      Serial.println();
+      sensortec.bhy2_bsec2_setConfigString(buffer, 1943);  // Pass selected config to the sensor
       Serial.print(configNames[configChoice - 1]);
       Serial.println(" Classifier On.");
     } else {
       Serial.println("Invalid configuration selected.");
+      sensortec.bhy2_bsec2_setConfigString(BSEC2CONFIG, sizeof(BSEC2CONFIG) / sizeof(BSEC2CONFIG[0]));
+      Serial.println("Reverted to Default Classifier");
     }
-
+    bsec2.begin();
   } else if (mode == 2) {
-    bsec2.end();
     sensortec.bhy2_bsec2_setHP((uint8_t*)BSEC2HP_TEMP, sizeof(BSEC2HP_TEMP), (uint8_t*)BSEC2HP_DUR, sizeof(BSEC2HP_DUR));
     bsec2Collector.begin();
     Serial.println("Collector On ");
   } else {
-    bsec2.end();
-    bsec2Collector.end();
     Serial.println("Senosrs Turned Off ");
   }
 }
@@ -90,13 +93,13 @@ void conditional() {
 //  For printing to Serial if connected
 //  =======================================================================================================================
 
-void serialiser() {                      //
-  static auto printTime = millis();      //
-  if (millis() - printTime >= 1000) {    //
-    printTime = millis();                //
-    if (mode == 1) {                     //
-      Serial.println(bsec2.toString());  //
-    } else if (mode == 2) {              //
+void serialiser() {                    //
+  static auto printTime = millis();    //
+  if (millis() - printTime >= 1000) {  //
+    printTime = millis();              //
+    if (mode == 1) {                   //
+      Serial.print(bsec2.toString());  //
+    } else if (mode == 2) {            //
       Serial.println(
         String((uint32_t)bsec2Collector.timestamp()) + " "
         + String(bsec2Collector.temperature()) + " "
@@ -120,7 +123,6 @@ void modeSelector(int input) {
     conditional();                     // Reinitialize sensors based on the new mode
   } else {                             //
     Serial.println("Invalid Input ");  //
-    Serial.println("Default mode selected ");
   }
 }
 
@@ -145,4 +147,5 @@ void requestEvent() {
              + String(bsec2Collector.gas_index()));
     Wire.write(data.c_str());
   }
+  Serial.print("I²C request received. ");  // Acknowledging request
 }
